@@ -19,7 +19,7 @@ export const simulatorScenarios: SimulatorScenario[] = [
       en: "Steady downtown",
     },
     description: {
-      th: "ย่านกลางเมืองช่วงกลางวัน รถบนถนนหลักและถนนรองมาสม่ำเสมอพอ ๆ กัน ระบบใช้รอบสัญญาณไฟ (Cycle Time) คงที่ 80 วินาที โดยไม่ต้องใช้ตัวตรวจจับ (Detector)",
+      th: "ย่านกลางเมืองช่วงกลางวัน รถบนถนนหลักและถนนรองมาสม่ำเสมอพอ ๆ กัน ระบบใช้รอบสัญญาณไฟ (Cycle Time) คงที่ 80 วินาที โดยไม่ต้องใช้อุปกรณ์ตรวจจับรถ (Detector)",
       en: "A downtown intersection at midday. Traffic on the main and side roads arrives steadily and evenly. The signal runs a fixed 80-second cycle with no detectors.",
     },
     settings: {
@@ -44,7 +44,7 @@ export const simulatorScenarios: SimulatorScenario[] = [
       en: "Quiet side road at night",
     },
     description: {
-      th: "ช่วงดึกที่รถน้อยทั้งสองทิศทาง ระบบ Vehicle Actuated (VA) ใช้ตัวตรวจจับ (Detector) เพื่อให้ไฟเขียวเฉพาะเมื่อมีรถมาจริง",
+      th: "ช่วงดึกที่รถน้อยทั้งสองทิศทาง ระบบ Vehicle Actuated (VA) ใช้อุปกรณ์ตรวจจับรถ (Detector) เพื่อให้ไฟเขียวเฉพาะเมื่อมีรถมาจริง",
       en: "Late at night with light traffic in both directions. Vehicle Actuated (VA) control uses detectors so green is served only when a vehicle actually arrives.",
     },
     settings: {
@@ -58,7 +58,7 @@ export const simulatorScenarios: SimulatorScenario[] = [
       gapTime: 3,
     },
     lesson: {
-      th: "สังเกตว่าเมื่อตัวตรวจจับไม่พบรถบนถนนรอง ระบบ VA จะข้ามหรือย่นเวลาเขียวของถนนรองให้สั้นลง ถนนหลักจึงได้ไฟเขียวต่อเนื่อง ลดการรอไฟแดงโดยไม่จำเป็น",
+      th: "สังเกตว่าเมื่ออุปกรณ์ตรวจจับไม่พบรถบนถนนรอง ระบบ VA จะข้ามหรือย่นเวลาเขียวของถนนรองให้สั้นลง ถนนหลักจึงได้ไฟเขียวต่อเนื่อง ลดการรอไฟแดงโดยไม่จำเป็น",
       en: "Watch how VA skips or shortens the side-road green when no vehicles are detected, letting the main road stay green and cutting unnecessary red-light waiting.",
     },
   },
@@ -69,7 +69,7 @@ export const simulatorScenarios: SimulatorScenario[] = [
       en: "Main-road rush hour",
     },
     description: {
-      th: "ชั่วโมงเร่งด่วนที่รถบนถนนหลักมาหนาแน่นต่อเนื่อง ส่วนถนนรองมีรถประปราย ระบบ VA ต่อเวลาเขียวครั้งละช่วงสั้น ๆ ตามช่องว่างระหว่างรถ (Gap Time) 4 วินาที",
+      th: "ชั่วโมงเร่งด่วนที่รถบนถนนหลักมาหนาแน่นต่อเนื่อง ส่วนถนนรองมีรถประปราย ระบบ VA ต่อเวลาเขียวครั้งละช่วงสั้น ๆ ตามช่วงห่างระหว่างรถ (Gap Time) 4 วินาที",
       en: "Rush hour with heavy, continuous traffic on the main road and only occasional side-road vehicles. VA extends the green in small steps using a 4-second gap time.",
     },
     settings: {
@@ -83,7 +83,7 @@ export const simulatorScenarios: SimulatorScenario[] = [
       gapTime: 4,
     },
     lesson: {
-      th: "ตราบใดที่ยังมีรถวิ่งผ่านตัวตรวจจับก่อนหมดช่องว่างที่กำหนด ไฟเขียวของถนนหลักจะถูกต่อออกไปเรื่อย ๆ จนถึงเพดานเวลาเขียวสูงสุด (Max Green) เพื่อไม่ให้ถนนรองต้องรอนานเกินไป",
+      th: "ตราบใดที่ยังมีรถวิ่งผ่านอุปกรณ์ตรวจจับ (Detector) ก่อนหมดช่วงห่างที่กำหนด ไฟเขียวของถนนหลักจะถูกต่อออกไปเรื่อย ๆ จนถึงเพดานเวลาเขียวสูงสุด (Max Green) เพื่อไม่ให้ถนนรองต้องรอนานเกินไป",
       en: "As long as vehicles keep arriving within the gap time, the main-road green keeps extending — up to the Max Green ceiling, which protects the side road from waiting forever.",
     },
   },
@@ -94,7 +94,7 @@ export const simulatorScenarios: SimulatorScenario[] = [
       en: "Fluctuating demand",
     },
     description: {
-      th: "ทางแยกที่ปริมาณรถขึ้น ๆ ลง ๆ ตลอดวัน ถนนหลักหนาแน่นและถนนรองมีรถปานกลาง ระบบ Adaptive ใช้ข้อมูลจากตัวตรวจจับมาปรับแผนสัญญาณไฟอย่างต่อเนื่อง",
+      th: "แยกที่ปริมาณรถขึ้น ๆ ลง ๆ ตลอดวัน ถนนหลักหนาแน่นและถนนรองมีรถปานกลาง ระบบ Adaptive ใช้ข้อมูลจากอุปกรณ์ตรวจจับรถ (Detector) มาปรับแผนสัญญาณไฟอย่างต่อเนื่อง",
       en: "An intersection where demand swings through the day — heavy on the main road, moderate on the side road. Adaptive control keeps adjusting the signal plan from detector data.",
     },
     settings: {

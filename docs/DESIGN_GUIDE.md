@@ -102,9 +102,19 @@ From `@/components/ui`:
   `analogy` (lightbulb, cyan) · `example` (map pin, navy) · `info` (blue)
   · `warning` (amber). Use `analogy` for the module analogies, `example`
   for the real-world examples, `warning` for disclaimers/limitations.
-- `ButtonLink({ href, variant?, children, className? })` — variants:
+- `ButtonLink({ href, variant?, size?, children, className? })` — variants:
   `primary` (navy) · `secondary` (cyan, highest emphasis on dark) ·
-  `outline` · `onDark`.
+  `outline` · `onDark`; sizes: `md` (default, min-h-12) · `sm` (min-h-11,
+  for demo controls).
+- `Button({ variant?, size?, ...buttonProps })` — the `<button>` twin of
+  `ButtonLink` (same variants/sizes, `type="button"` by default). Never
+  hand-roll a solid button; use this.
+
+From `@/components/icons`:
+
+- `ArrowRightIcon` / `PlayIcon` / `PauseIcon` — shared SVG icons, each
+  accepting an optional `className` (they use `currentColor`). Do not
+  redefine these shapes locally.
 - `ProsConsGrid({ prosTitle, consTitle, pros, cons })` — advantages vs
   limitations, green/red left-edged cards.
 - `ACCENT_STYLES[accent]` → `{ text, bg, softBg, border, ring }` classes.
@@ -165,7 +175,34 @@ except for page-specific prose.
 - Text contrast: on white use `text-navy-600` or darker; on navy-900 use
   `text-navy-200` or lighter.
 
-## 9. Required disclaimers (exact copy)
+## 9. Canonical Thai terminology
+
+One Thai term per English term, everywhere (lessons, glossary, quiz,
+simulator). When adding content, use exactly these forms:
+
+| English | Thai (canonical) |
+| --- | --- |
+| Cycle Time | รอบสัญญาณไฟ |
+| Phase | เฟสสัญญาณ (running text: เฟส — never จังหวะ) |
+| Split | สัดส่วนเวลาเขียว |
+| Green / Yellow Time | เวลาไฟเขียว / เวลาไฟเหลือง |
+| All-Red Time | ช่วงไฟแดงพร้อมกันทุกทิศทาง |
+| Minimum / Maximum Green | เวลาเขียวขั้นต่ำ / เวลาเขียวสูงสุด |
+| Detector | อุปกรณ์ตรวจจับรถ (running: อุปกรณ์ตรวจจับ — never ตัวตรวจจับ) |
+| Vehicle Call | การเรียกเฟสจากรถ (running: การเรียกเฟส) |
+| Gap Time | ช่วงห่างระหว่างรถ |
+| Extension Time | เวลาต่อขยายไฟเขียว |
+| Queue Length | ความยาวแถวรถ |
+| Degree of Saturation | ระดับการอิ่มตัว |
+| Traffic Volume | ปริมาณจราจร |
+| Travel Time | เวลาเดินทาง |
+| Coordination | การประสานสัญญาณ |
+| Offset | ค่าเหลื่อมเวลา |
+| Corridor Control | การควบคุมสัญญาณไฟตลอดแนวเส้นทาง |
+
+Register: use แยก (not ทางแยก) and ถนนหลัก/ถนนรอง (not ถนนสายหลัก/สายรอง).
+
+## 10. Required disclaimers (exact copy)
 
 Simulator page must show:
 

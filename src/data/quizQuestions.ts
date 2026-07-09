@@ -11,42 +11,42 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "fixed-time-best-fit",
     question: {
-      th: "ระบบ Fixed Time เหมาะกับทางแยกแบบไหนมากที่สุด?",
+      th: "ระบบ Fixed Time เหมาะกับแยกแบบไหนมากที่สุด?",
       en: "Which kind of intersection suits Fixed Time control best?",
     },
     choices: [
       {
         id: "a",
         text: {
-          th: "ทางแยกที่ปริมาณรถผันผวนตลอดวันจนคาดเดาไม่ได้",
+          th: "แยกที่ปริมาณรถผันผวนตลอดวันจนคาดเดาไม่ได้",
           en: "An intersection where traffic fluctuates unpredictably all day",
         },
       },
       {
         id: "b",
         text: {
-          th: "ทางแยกที่ปริมาณรถค่อนข้างคงที่และมีรูปแบบซ้ำเดิมทุกวัน",
+          th: "แยกที่ปริมาณรถค่อนข้างคงที่และมีรูปแบบซ้ำเดิมทุกวัน",
           en: "An intersection with fairly steady traffic that repeats the same pattern every day",
         },
       },
       {
         id: "c",
         text: {
-          th: "ทางแยกที่ต้องปรับสัญญาณตามข้อมูลจราจรแบบเรียลไทม์",
+          th: "แยกที่ต้องปรับสัญญาณตามข้อมูลจราจรแบบเรียลไทม์",
           en: "An intersection that must adjust its signals from real-time traffic data",
         },
       },
       {
         id: "d",
         text: {
-          th: "ทางแยกที่มีรถเฉพาะบางช่วงเวลา เช่น กลางดึกแทบไม่มีรถเลย",
+          th: "แยกที่มีรถเฉพาะบางช่วงเวลา เช่น กลางดึกแทบไม่มีรถเลย",
           en: "An intersection with traffic only at certain times, e.g. almost empty late at night",
         },
       },
     ],
     correctChoiceId: "b",
     explanation: {
-      th: "Fixed Time ทำงานตามแผนเวลาที่ตั้งไว้ล่วงหน้า ไม่มีอุปกรณ์ตรวจจับรถ จึงได้ผลดีเมื่อปริมาณรถค่อนข้างคงที่และคาดเดาได้ ตั้งรอบสัญญาณไฟ (Cycle Time) ครั้งเดียวก็ใช้ได้ทุกวัน ส่วนทางแยกที่รถผันผวน หรือมีรถเฉพาะบางช่วง ระบบตายตัวจะเสียเวลาเปล่า ต้องใช้ VA หรือ Adaptive ที่ตอบสนองต่อรถจริงได้ดีกว่า",
+      th: "Fixed Time ทำงานตามแผนเวลาที่ตั้งไว้ล่วงหน้า ไม่มีอุปกรณ์ตรวจจับรถ จึงได้ผลดีเมื่อปริมาณรถค่อนข้างคงที่และคาดเดาได้ ตั้งรอบสัญญาณไฟ (Cycle Time) ครั้งเดียวก็ใช้ได้ทุกวัน ส่วนแยกที่รถผันผวน หรือมีรถเฉพาะบางช่วง ระบบตายตัวจะเสียเวลาเปล่า ต้องใช้ VA หรือ Adaptive ที่ตอบสนองต่อรถจริงได้ดีกว่า",
       en: "Fixed Time follows a pre-set timing plan with no vehicle detection, so it works best where traffic is steady and predictable — set the cycle time once and it fits every day. Where traffic fluctuates, or vehicles appear only at certain times, a fixed plan wastes green time; VA or Adaptive control responds to actual demand far better.",
     },
     relatedSystem: "fixed-time",
@@ -61,7 +61,7 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "a",
         text: {
-          th: "อุปกรณ์ตรวจจับยานพาหนะ (Detector) เช่น Inductive Loop เรดาร์ หรือกล้องวิเคราะห์ภาพ",
+          th: "อุปกรณ์ตรวจจับรถ (Detector) เช่น Inductive Loop เรดาร์ หรือกล้องวิเคราะห์ภาพ",
           en: "Vehicle detectors — e.g. inductive loops, radar, or video analytics cameras",
         },
       },
@@ -75,21 +75,21 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "c",
         text: {
-          th: "อุปกรณ์ GPS ติดตั้งในรถทุกคันที่ผ่านทางแยก",
+          th: "อุปกรณ์ GPS ติดตั้งในรถทุกคันที่ผ่านแยก",
           en: "GPS units installed in every vehicle passing the intersection",
         },
       },
       {
         id: "d",
         text: {
-          th: "ศูนย์ควบคุมกลางที่เชื่อมต่อทางแยกทุกแห่งในเมือง",
+          th: "ศูนย์ควบคุมกลางที่เชื่อมต่อแยกทุกแห่งในเมือง",
           en: "A central control room connected to every intersection in the city",
         },
       },
     ],
     correctChoiceId: "a",
     explanation: {
-      th: "หัวใจของ VA คืออุปกรณ์ตรวจจับยานพาหนะ (Detector) เพราะระบบต้องรู้ว่ามีรถมาถึงหรือจอดรออยู่จริง จึงจะตัดสินใจต่อไฟเขียว ตัดจบ หรือข้ามจังหวะได้ ป้าย VMS เป็นเพียงการแสดงข้อมูล ไม่ได้ควบคุมสัญญาณ ส่วน GPS ในรถทุกคันไม่ใช่เงื่อนไขที่ทำได้จริง และศูนย์ควบคุมกลางเป็นลักษณะของระบบ Adaptive ระดับโครงข่าย ไม่ใช่สิ่งที่ VA รายทางแยกต้องมี",
+      th: "หัวใจของ VA คืออุปกรณ์ตรวจจับรถ (Detector) เพราะระบบต้องรู้ว่ามีรถมาถึงหรือจอดรออยู่จริง จึงจะตัดสินใจต่อไฟเขียว ตัดจบ หรือข้ามเฟสได้ ป้าย VMS เป็นเพียงการแสดงข้อมูล ไม่ได้ควบคุมสัญญาณ ส่วน GPS ในรถทุกคันไม่ใช่เงื่อนไขที่ทำได้จริง และศูนย์ควบคุมกลางเป็นลักษณะของระบบ Adaptive ระดับโครงข่าย ไม่ใช่สิ่งที่ VA ระดับแยกเดี่ยวต้องมี",
       en: "The heart of VA is the vehicle detector: the controller must know a vehicle has actually arrived or is waiting before it can extend, end, or skip a phase. VMS signs only display information — they do not control the signal; GPS in every car is not a realistic requirement; and a central control room is a feature of network-level Adaptive systems, not something a single VA intersection needs.",
     },
     relatedSystem: "vehicle-actuated",
@@ -104,7 +104,7 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "a",
         text: {
-          th: "Adaptive ไม่ต้องใช้อุปกรณ์ตรวจจับยานพาหนะ (Detector) เลย",
+          th: "Adaptive ไม่ต้องใช้อุปกรณ์ตรวจจับรถ (Detector) เลย",
           en: "Adaptive needs no vehicle detectors at all",
         },
       },
@@ -118,7 +118,7 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "c",
         text: {
-          th: "Adaptive ปรับแผนสัญญาณตามข้อมูลจราจรแบบเรียลไทม์ และประสานหลายทางแยกร่วมกันได้ ไม่ใช่แค่ตอบสนองรายจังหวะ (Phase) ที่ทางแยกเดียว",
+          th: "Adaptive ปรับแผนสัญญาณตามข้อมูลจราจรแบบเรียลไทม์ และประสานหลายแยกร่วมกันได้ ไม่ใช่แค่ตอบสนองรายเฟส (Phase) ที่แยกเดียว",
           en: "Adaptive re-optimises the signal plan from real-time traffic data and can coordinate multiple intersections — not just react phase-by-phase at a single junction",
         },
       },
@@ -132,7 +132,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctChoiceId: "c",
     explanation: {
-      th: "VA ตอบสนองรายจังหวะที่ทางแยกเดียว คือต่อหรือตัดไฟเขียวตามรถที่ผ่าน Detector ส่วน Adaptive ยกระดับขึ้นไปอีกขั้น โดยนำข้อมูลจราจรแบบเรียลไทม์มาปรับทั้งแผน ทั้งรอบสัญญาณไฟ (Cycle Time) สัดส่วนเวลา (Split) และค่าเวลาเหลื่อม (Offset) และประสานการทำงานหลายทางแยกเป็นโครงข่ายได้ Adaptive ยังต้องพึ่ง Detector คุณภาพดีเช่นกัน จึงไม่ใช่แค่การเปลี่ยนชนิดอุปกรณ์ตรวจจับ และยิ่งไม่ใช่แผนตายตัว",
+      th: "VA ตอบสนองรายเฟสที่แยกเดียว คือต่อหรือตัดไฟเขียวตามรถที่ผ่าน Detector ส่วน Adaptive ยกระดับขึ้นไปอีกขั้น โดยนำข้อมูลจราจรแบบเรียลไทม์มาปรับทั้งแผน ทั้งรอบสัญญาณไฟ (Cycle Time) สัดส่วนเวลาเขียว (Split) และค่าเหลื่อมเวลา (Offset) และประสานการทำงานหลายแยกเป็นโครงข่ายได้ Adaptive ยังต้องพึ่ง Detector คุณภาพดีเช่นกัน จึงไม่ใช่แค่การเปลี่ยนชนิดอุปกรณ์ตรวจจับ และยิ่งไม่ใช่แผนตายตัว",
       en: "VA reacts phase-by-phase at one junction — extending or ending green based on detector hits. Adaptive goes further: it uses real-time traffic data to re-optimise the whole plan (cycle time, splits, offsets) and can coordinate many intersections as a network. Adaptive still depends on good detectors, so it is not merely a different sensor type — and it is certainly not a fixed plan.",
     },
     relatedSystem: "adaptive",
@@ -168,14 +168,14 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "d",
         text: {
-          th: "ช่วงเวลาห่างระหว่างรถที่ระบบใช้ตัดสินใจว่าจะต่อหรือจบไฟเขียว",
+          th: "ช่วงห่างระหว่างรถที่ระบบใช้ตัดสินใจว่าจะต่อหรือจบไฟเขียว",
           en: "The time gap between vehicles that the controller uses to decide whether to extend or end the green",
         },
       },
     ],
     correctChoiceId: "d",
     explanation: {
-      th: "Gap Time คือช่วงเวลาห่างระหว่างรถ ตราบใดที่รถคันถัดไปมาถึง Detector ทันภายในค่านี้ ไฟเขียวจะต่อเวลาให้เรื่อย ๆ แต่ถ้ารถขาดตอนนานเกิน Gap Time ระบบถือว่ารถหมดแล้วจึงตัดจบไฟเขียว ตัวเลือกอื่นเป็นคนละเรื่อง คือเวลาไฟเหลือง (Yellow Time) ช่วง All-Red และรอบสัญญาณไฟ (Cycle Time) ตามลำดับ",
+      th: "Gap Time คือช่วงห่างระหว่างรถ ตราบใดที่รถคันถัดไปมาถึง Detector ทันภายในค่านี้ ไฟเขียวจะต่อเวลาให้เรื่อย ๆ แต่ถ้ารถขาดตอนนานเกิน Gap Time ระบบถือว่ารถหมดแล้วจึงตัดจบไฟเขียว ตัวเลือกอื่นเป็นคนละเรื่อง คือเวลาไฟเหลือง (Yellow Time) ช่วง All-Red และรอบสัญญาณไฟ (Cycle Time) ตามลำดับ",
       en: "Gap time is the headway between vehicles: as long as the next vehicle reaches the detector within this value, the green keeps extending; once the gap exceeds it, traffic has thinned out and the controller ends the green. The other choices describe different terms — yellow time, all-red time, and cycle time respectively.",
     },
     relatedSystem: "vehicle-actuated",
@@ -183,21 +183,21 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "va-empty-side-road",
     question: {
-      th: "ถ้าถนนสายรองไม่มีรถเลย ระบบ VA ควรทำอย่างไร?",
+      th: "ถ้าถนนรองไม่มีรถเลย ระบบ VA ควรทำอย่างไร?",
       en: "If the side road has no vehicles at all, what should a VA system do?",
     },
     choices: [
       {
         id: "a",
         text: {
-          th: "เปิดไฟเขียวให้ถนนสายรองตามเวลาเดิมทุกครั้ง เพื่อความยุติธรรม",
+          th: "เปิดไฟเขียวให้ถนนรองตามเวลาเดิมทุกครั้ง เพื่อความยุติธรรม",
           en: "Give the side road its usual green every time, to be fair",
         },
       },
       {
         id: "b",
         text: {
-          th: "ข้ามจังหวะ (Skip Phase) หรือลดไฟเขียวที่ไม่จำเป็นของถนนสายรอง แล้วให้เวลากับถนนสายหลักแทน",
+          th: "ข้ามเฟส (Skip Phase) หรือลดไฟเขียวที่ไม่จำเป็นของถนนรอง แล้วให้เวลากับถนนหลักแทน",
           en: "Skip the phase or cut the side road's unneeded green, giving that time to the main road instead",
         },
       },
@@ -218,7 +218,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctChoiceId: "b",
     explanation: {
-      th: "จุดแข็งของ VA คือให้ไฟเขียวเฉพาะทิศทางที่มีรถจริง เมื่อ Detector ไม่พบรถบนถนนสายรอง จึงไม่มีการเรียกขอสัญญาณ (Vehicle Call) ระบบสามารถข้ามจังหวะนั้นหรือให้ไฟเขียวสั้นที่สุดตาม Minimum Green แล้วคืนเวลาให้ถนนสายหลัก การเปิดไฟเขียวให้ถนนว่างตามเวลาเดิมคือจุดอ่อนของ Fixed Time ส่วนไฟกะพริบเป็นโหมดพิเศษที่ไม่ได้ใช้ในการทำงานปกติ และการยืด Cycle Time เพื่อรอรถยิ่งทำให้ทุกทิศเสียเวลามากขึ้น",
+      th: "จุดแข็งของ VA คือให้ไฟเขียวเฉพาะทิศทางที่มีรถจริง เมื่อ Detector ไม่พบรถบนถนนรอง จึงไม่มีการเรียกเฟส (Vehicle Call) ระบบสามารถข้ามเฟสนั้นหรือให้ไฟเขียวสั้นที่สุดตาม Minimum Green แล้วคืนเวลาให้ถนนหลัก การเปิดไฟเขียวให้ถนนว่างตามเวลาเดิมคือจุดอ่อนของ Fixed Time ส่วนไฟกะพริบเป็นโหมดพิเศษที่ไม่ได้ใช้ในการทำงานปกติ และการยืด Cycle Time เพื่อรอรถยิ่งทำให้ทุกทิศเสียเวลามากขึ้น",
       en: "VA's strength is serving green only where vehicles actually are. With no detector hits on the side road there is no vehicle call, so the controller can skip that phase or hold it to minimum green and return the time to the main road. Serving an empty road on schedule is exactly Fixed Time's weakness; flashing yellow is a special mode, not normal operation; and stretching the cycle to wait for cars only adds delay for everyone.",
     },
     relatedSystem: "vehicle-actuated",
@@ -226,7 +226,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "cycle-split-calc",
     question: {
-      th: "ทางแยกใช้รอบสัญญาณไฟ (Cycle Time) 100 วินาที และตั้งสัดส่วนเวลา (Split) ให้ถนนสายหลัก 60% ถนนสายหลักได้เวลาประมาณกี่วินาทีในแต่ละรอบ?",
+      th: "แยกแห่งหนึ่งใช้รอบสัญญาณไฟ (Cycle Time) 100 วินาที และตั้งสัดส่วนเวลาเขียว (Split) ให้ถนนหลัก 60% ถนนหลักได้เวลาประมาณกี่วินาทีในแต่ละรอบ?",
       en: "An intersection runs a 100-second cycle time with a 60% split for the main road. About how many seconds does the main road get per cycle?",
     },
     choices: [
@@ -261,7 +261,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctChoiceId: "c",
     explanation: {
-      th: "Split คือการแบ่งเวลาในหนึ่งรอบให้แต่ละจังหวะ (Phase) คิดง่าย ๆ คือ 60% ของ 100 วินาที = 60 วินาที ส่วน 40 วินาทีที่เหลือเป็นของถนนสายรอง 100 วินาทีคือทั้งรอบ ไม่ใช่ของทิศเดียว และ 6 วินาทีเกิดจากการคำนวณเปอร์เซ็นต์ผิด หลักการคือทิศทางที่มีรถมากกว่าควรได้ Split มากกว่า",
+      th: "Split คือการแบ่งเวลาในหนึ่งรอบให้แต่ละเฟส (Phase) คิดง่าย ๆ คือ 60% ของ 100 วินาที = 60 วินาที ส่วน 40 วินาทีที่เหลือเป็นของถนนรอง 100 วินาทีคือทั้งรอบ ไม่ใช่ของทิศเดียว และ 6 วินาทีเกิดจากการคำนวณเปอร์เซ็นต์ผิด หลักการคือทิศทางที่มีรถมากกว่าควรได้ Split มากกว่า",
       en: "The split divides the cycle among the phases: 60% of 100 seconds = 60 seconds, leaving 40 seconds for the side road. 100 seconds is the whole cycle, not one approach's share, and 6 seconds comes from a percentage slip. The principle: the approach with more traffic should get the larger split.",
     },
     relatedSystem: "fixed-time",
@@ -276,7 +276,7 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "a",
         text: {
-          th: "ให้รถที่ยังค้างอยู่กลางทางแยกออกไปได้หมด ก่อนทิศถัดไปได้ไฟเขียว เพื่อลดอุบัติเหตุ",
+          th: "ให้รถที่ยังค้างอยู่กลางแยกออกไปได้หมด ก่อนทิศถัดไปได้ไฟเขียว เพื่อลดอุบัติเหตุ",
           en: "To let vehicles still inside the intersection clear out before the next approach gets green, reducing crashes",
         },
       },
@@ -297,21 +297,21 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "d",
         text: {
-          th: "เพิ่มเวลาไฟเขียวให้ถนนสายหลักทางอ้อม",
+          th: "เพิ่มเวลาไฟเขียวให้ถนนหลักทางอ้อม",
           en: "To indirectly add green time to the main road",
         },
       },
     ],
     correctChoiceId: "a",
     explanation: {
-      th: "All-Red เป็นช่วงสั้น ๆ ประมาณ 1–3 วินาที เพื่อเคลียร์ทางแยก ให้รถคันสุดท้ายที่เข้ามาช่วงท้ายไฟเหลืองออกไปพ้นก่อนที่ทิศตัดกันจะได้ไฟเขียว จึงเป็นเรื่องความปลอดภัยโดยตรง ไม่เกี่ยวกับการประหยัดพลังงาน ไม่ใช่บทลงโทษ และไม่ได้เพิ่มไฟเขียวให้ทิศใด เพราะช่วงนี้ไม่มีทิศไหนเคลื่อนที่ได้เลย",
+      th: "All-Red เป็นช่วงสั้น ๆ ประมาณ 1–3 วินาที เพื่อเคลียร์แยก ให้รถคันสุดท้ายที่เข้ามาช่วงท้ายไฟเหลืองออกไปพ้นก่อนที่ทิศตัดกันจะได้ไฟเขียว จึงเป็นเรื่องความปลอดภัยโดยตรง ไม่เกี่ยวกับการประหยัดพลังงาน ไม่ใช่บทลงโทษ และไม่ได้เพิ่มไฟเขียวให้ทิศใด เพราะช่วงนี้ไม่มีทิศไหนเคลื่อนที่ได้เลย",
       en: "All-red is a short 1–3 second interval that clears the intersection: vehicles that entered late in the yellow can exit before the conflicting approach gets green. It is purely a safety measure — it saves no energy, punishes no one, and gives no approach extra green, since nobody moves during it.",
     },
   },
   {
     id: "detector-types",
     question: {
-      th: "ข้อใดเป็นอุปกรณ์ตรวจจับยานพาหนะ (Detector) ที่ใช้ส่งข้อมูลให้ตู้ควบคุมสัญญาณไฟ?",
+      th: "ข้อใดเป็นอุปกรณ์ตรวจจับรถ (Detector) ที่ใช้ส่งข้อมูลให้ตู้ควบคุมสัญญาณไฟ?",
       en: "Which of these is a vehicle detector that feeds data to the signal controller?",
     },
     choices: [
@@ -346,7 +346,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctChoiceId: "d",
     explanation: {
-      th: "Inductive Loop คือ Detector แบบคลาสสิกที่สุด เมื่อรถวิ่งทับขดลวด สนามแม่เหล็กจะเปลี่ยน ตู้ควบคุมจึงรู้ทันทีว่ามีรถ นอกจากนี้ยังมีเรดาร์และกล้องวิเคราะห์ภาพ (Video Analytics) ที่นับเป็น Detector เช่นกัน จุดสำคัญคือต้องส่งข้อมูลให้ตู้ควบคุมแบบอัตโนมัติ กล้อง CCTV ที่แค่บันทึกภาพไม่ได้ส่งสัญญาณตรวจจับ ป้าย VMS มีไว้แสดงข้อมูลให้คนขับ และแอปนำทางไม่ได้เชื่อมต่อกับตู้ควบคุมทางแยก",
+      th: "Inductive Loop คือ Detector แบบคลาสสิกที่สุด เมื่อรถวิ่งทับขดลวด สนามแม่เหล็กจะเปลี่ยน ตู้ควบคุมจึงรู้ทันทีว่ามีรถ นอกจากนี้ยังมีเรดาร์และกล้องวิเคราะห์ภาพ (Video Analytics) ที่นับเป็น Detector เช่นกัน จุดสำคัญคือต้องส่งข้อมูลให้ตู้ควบคุมแบบอัตโนมัติ กล้อง CCTV ที่แค่บันทึกภาพไม่ได้ส่งสัญญาณตรวจจับ ป้าย VMS มีไว้แสดงข้อมูลให้คนขับ และแอปนำทางไม่ได้เชื่อมต่อกับตู้ควบคุมของแยก",
       en: "The inductive loop is the classic detector: a vehicle over the loop changes its magnetic field, so the controller instantly knows a car is there. Radar and video-analytics cameras also count as detectors. The key is feeding the controller automatically — a CCTV camera that only records sends no detection signal, a VMS displays information to drivers, and a phone navigation app is not connected to the intersection controller.",
     },
     relatedSystem: "vehicle-actuated",
@@ -354,14 +354,14 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "degree-of-saturation",
     question: {
-      th: "ทิศทางหนึ่งระบายรถได้สูงสุด 1,000 คัน/ชั่วโมง แต่มีรถมาถึง 900 คัน/ชั่วโมง ระดับความอิ่มตัว (Degree of Saturation) เป็นเท่าไร และหมายความว่าอย่างไร?",
+      th: "ทิศทางหนึ่งระบายรถได้สูงสุด 1,000 คัน/ชั่วโมง แต่มีรถมาถึง 900 คัน/ชั่วโมง ระดับการอิ่มตัว (Degree of Saturation) เป็นเท่าไร และหมายความว่าอย่างไร?",
       en: "An approach can discharge at most 1,000 vehicles/hour but receives 900 vehicles/hour. What is its degree of saturation, and what does it mean?",
     },
     choices: [
       {
         id: "a",
         text: {
-          th: "1.11 — เกินความจุแล้ว แถวคอยจะยาวขึ้นทุกรอบ",
+          th: "1.11 — เกินความจุแล้ว แถวรถจะยาวขึ้นทุกรอบ",
           en: "1.11 — over capacity; queues grow every cycle",
         },
       },
@@ -389,7 +389,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctChoiceId: "b",
     explanation: {
-      th: "Degree of Saturation คืออัตราส่วนรถที่มาถึงต่อความจุที่ระบายได้ (v/c) = 900 ÷ 1,000 = 0.90 ค่าใกล้ 1.0 แปลว่าใช้ความจุเกือบเต็ม ควรเฝ้าระวัง ถ้าเกิน 1.0 เมื่อไร รถจะมาเร็วกว่าที่ระบายได้และแถวคอย (Queue Length) จะสะสมยาวขึ้นทุกรอบ ค่า 1.11 เกิดจากการกลับเศษส่วน (1,000 ÷ 900) ส่วน 0.10 และ 90 เป็นการคำนวณที่ผิด ระบบ Adaptive หลายระบบใช้ค่านี้เป็นตัวชี้วัดหลักในการปรับสัญญาณ",
+      th: "Degree of Saturation คืออัตราส่วนรถที่มาถึงต่อความจุที่ระบายได้ (v/c) = 900 ÷ 1,000 = 0.90 ค่าใกล้ 1.0 แปลว่าใช้ความจุเกือบเต็ม ควรเฝ้าระวัง ถ้าเกิน 1.0 เมื่อไร รถจะมาเร็วกว่าที่ระบายได้และแถวรถ (Queue Length) จะสะสมยาวขึ้นทุกรอบ ค่า 1.11 เกิดจากการกลับเศษส่วน (1,000 ÷ 900) ส่วน 0.10 และ 90 เป็นการคำนวณที่ผิด ระบบ Adaptive หลายระบบใช้ค่านี้เป็นตัวชี้วัดหลักในการปรับสัญญาณ",
       en: "Degree of saturation is arrivals divided by capacity (v/c) = 900 ÷ 1,000 = 0.90. A value near 1.0 means the approach is nearly at capacity and worth monitoring; above 1.0, vehicles arrive faster than they can be served and the queue grows every cycle. 1.11 comes from inverting the ratio (1,000 ÷ 900), while 0.10 and 90 are simply miscalculations. Many Adaptive systems use this value as a key input when adjusting signals.",
     },
     relatedSystem: "adaptive",
@@ -397,14 +397,14 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "offset-green-wave",
     question: {
-      th: "ในการประสานสัญญาณไฟ (Coordination) ให้เกิดคลื่นไฟเขียว (Green Wave) ค่าเวลาเหลื่อม (Offset) ที่ดีควรเท่ากับอะไร?",
+      th: "ในการประสานสัญญาณ (Coordination) ให้เกิดคลื่นไฟเขียว (Green Wave) ค่าเหลื่อมเวลา (Offset) ที่ดีควรเท่ากับอะไร?",
       en: "In signal coordination, to create a green wave, what should a good offset equal?",
     },
     choices: [
       {
         id: "a",
         text: {
-          th: "เวลาไฟเหลืองของทางแยกก่อนหน้า",
+          th: "เวลาไฟเหลืองของแยกก่อนหน้า",
           en: "The yellow time of the previous intersection",
         },
       },
@@ -418,21 +418,21 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "c",
         text: {
-          th: "เวลาที่รถใช้เดินทางจากทางแยกก่อนหน้ามาถึงทางแยกนี้",
+          th: "เวลาที่รถใช้เดินทางจากแยกก่อนหน้ามาถึงแยกนี้",
           en: "The travel time from the previous intersection to this one",
         },
       },
       {
         id: "d",
         text: {
-          th: "ศูนย์ — ทุกทางแยกต้องเริ่มไฟเขียวพร้อมกันเป๊ะ",
+          th: "ศูนย์ — ทุกแยกต้องเริ่มไฟเขียวพร้อมกันเป๊ะ",
           en: "Zero — every intersection must start green at exactly the same moment",
         },
       },
     ],
     correctChoiceId: "c",
     explanation: {
-      th: "เป้าหมายของคลื่นไฟเขียวคือให้รถที่ออกจากทางแยกแรกไปถึงทางแยกถัดไปตอนไฟเขียวเปิดพอดี ค่า Offset ที่ดีจึงต้องเท่ากับเวลาเดินทางระหว่างสองทางแยก เช่น ห่างกัน 500 เมตร วิ่ง 50 กม./ชม. ใช้เวลาราว 36 วินาที ก็ตั้ง Offset 36 วินาที ถ้าตั้ง Offset เป็นศูนย์ รถที่เพิ่งออกตัวจะไปเจอไฟเขียวที่เปิดมาก่อนแล้วและอาจปิดก่อนไปถึง ส่วนเวลาไฟเหลืองหรือครึ่งรอบสัญญาณไฟไม่ได้สัมพันธ์กับระยะทางและความเร็วจริงเลย",
+      th: "เป้าหมายของคลื่นไฟเขียวคือให้รถที่ออกจากแยกแรกไปถึงแยกถัดไปตอนไฟเขียวเปิดพอดี ค่า Offset ที่ดีจึงต้องเท่ากับเวลาเดินทางระหว่างแยกทั้งสอง เช่น ห่างกัน 500 เมตร วิ่ง 50 กม./ชม. ใช้เวลาราว 36 วินาที ก็ตั้ง Offset 36 วินาที ถ้าตั้ง Offset เป็นศูนย์ รถที่เพิ่งออกตัวจะไปเจอไฟเขียวที่เปิดมาก่อนแล้วและอาจปิดก่อนไปถึง ส่วนเวลาไฟเหลืองหรือครึ่งรอบสัญญาณไฟไม่ได้สัมพันธ์กับระยะทางและความเร็วจริงเลย",
       en: "A green wave aims for vehicles leaving one junction to arrive at the next just as its green begins, so a good offset equals the travel time between the two — e.g. 500 metres at 50 km/h takes about 36 seconds, so the offset is 36 s. A zero offset means the downstream green starts (and may end) before the platoon arrives, and neither the yellow time nor half the cycle has any relation to the actual distance and speed.",
     },
   },

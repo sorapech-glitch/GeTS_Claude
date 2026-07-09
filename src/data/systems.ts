@@ -254,7 +254,7 @@ const vehicleActuated: TrafficSystem = {
       en: "If vehicles keep arriving, the controller extends the green in short increments as each vehicle crosses the detector.",
     },
     {
-      th: "ถ้าช่องว่างระหว่างรถนานเกินค่า Gap Time ที่ตั้งไว้ แสดงว่ารถหมดแล้ว ระบบจะตัดจบไฟเขียวและไปเฟสถัดไปที่มีการเรียก",
+      th: "ถ้าช่วงห่างระหว่างรถนานเกินค่า Gap Time ที่ตั้งไว้ แสดงว่ารถหมดแล้ว ระบบจะตัดจบไฟเขียวและไปเฟสถัดไปที่มีการเรียก",
       en: "If the gap between vehicles exceeds the configured gap time, demand has ended — the green terminates and the controller serves the next called phase.",
     },
     {
@@ -299,7 +299,7 @@ const vehicleActuated: TrafficSystem = {
       term: "Gap Time",
       th: "ช่วงห่างระหว่างรถ",
       description: {
-        th: "ช่วงเวลาห่างระหว่างรถคันต่อคันที่ Detector ใช้ตัดสินว่ารถยังมาต่อเนื่องหรือหมดแล้ว ถ้าห่างเกินค่านี้ ระบบจะตัดจบไฟเขียว",
+        th: "ช่วงห่างระหว่างรถคันต่อคันที่ Detector ใช้ตัดสินว่ารถยังมาต่อเนื่องหรือหมดแล้ว ถ้าห่างเกินค่านี้ ระบบจะตัดจบไฟเขียว",
         en: "The headway between successive vehicles used to judge whether demand continues. If the gap exceeds this value, the green terminates.",
       },
     },
@@ -423,7 +423,7 @@ const adaptive: TrafficSystem = {
     en: "Continuously measures real traffic, then re-tunes signal plans and coordinates multiple junctions automatically.",
   },
   definition: {
-    th: "Adaptive คือระบบควบคุมสัญญาณไฟที่เก็บข้อมูลจราจรจริงอย่างต่อเนื่อง เช่น ปริมาณรถ (Traffic Volume) และความยาวแถวรถ (Queue Length) แล้วคำนวณปรับรอบสัญญาณ เวลาเขียว และการประสานระหว่างแยก (Coordination) ให้เหมาะกับสถานการณ์ปัจจุบันโดยอัตโนมัติ อย่างไรก็ตาม Adaptive ช่วย \"ตอบสนอง\" ต่อสภาพจราจรที่เปลี่ยนแปลงได้ดีขึ้น แต่ผลลัพธ์ยังขึ้นอยู่กับคุณภาพของอุปกรณ์ตรวจจับ ความจุของถนน การตั้งค่าระบบ และพฤติกรรมการจราจร ไม่ได้ทำให้รถหายติดโดยอัตโนมัติ",
+    th: "Adaptive คือระบบควบคุมสัญญาณไฟที่เก็บข้อมูลจราจรจริงอย่างต่อเนื่อง เช่น ปริมาณจราจร (Traffic Volume) และความยาวแถวรถ (Queue Length) แล้วคำนวณปรับรอบสัญญาณ เวลาเขียว และการประสานระหว่างแยก (Coordination) ให้เหมาะกับสถานการณ์ปัจจุบันโดยอัตโนมัติ อย่างไรก็ตาม Adaptive ช่วย \"ตอบสนอง\" ต่อสภาพจราจรที่เปลี่ยนแปลงได้ดีขึ้น แต่ผลลัพธ์ยังขึ้นอยู่กับคุณภาพของอุปกรณ์ตรวจจับ ความจุของถนน การตั้งค่าระบบ และพฤติกรรมการจราจร ไม่ได้ทำให้รถหายติดโดยอัตโนมัติ",
     en: "Adaptive control continuously collects real traffic data — such as traffic volume and queue length — and automatically recalculates cycle times, green times, and coordination between junctions to match current conditions. Importantly, Adaptive improves the response to changing traffic, but results still depend on detector quality, road capacity, system configuration, and traffic behavior — it does not make congestion disappear by itself.",
   },
   analogy: {
@@ -436,7 +436,7 @@ const adaptive: TrafficSystem = {
   },
   howItWorks: [
     {
-      th: "อุปกรณ์ตรวจจับหลายจุดเก็บข้อมูลต่อเนื่อง เช่น ปริมาณรถ (Traffic Volume) ความยาวแถวรถ (Queue Length) และเวลาเดินทาง (Travel Time)",
+      th: "อุปกรณ์ตรวจจับหลายจุดเก็บข้อมูลต่อเนื่อง เช่น ปริมาณจราจร (Traffic Volume) ความยาวแถวรถ (Queue Length) และเวลาเดินทาง (Travel Time)",
       en: "Detectors at multiple points continuously collect data — traffic volume, queue length, and travel time.",
     },
     {
