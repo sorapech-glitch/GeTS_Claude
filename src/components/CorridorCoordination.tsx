@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/lib/i18n";
 import type { Bi, LightColor } from "@/lib/types";
+import { PauseIcon, PlayIcon } from "@/components/icons";
+import { Button } from "@/components/ui";
 
 /**
  * CorridorCoordination — an animated "green wave" (Green Wave) along a
@@ -81,27 +83,6 @@ function carX(index: number, t: number): number {
   const queueX = QUEUE_HEAD_X - index * CAR_SPACING;
   if (t <= FIRST_GREEN) return queueX;
   return queueX + SPEED * (t - FIRST_GREEN);
-}
-
-/* ------------------------------------------------------------------ */
-/* Small inline icons                                                  */
-/* ------------------------------------------------------------------ */
-
-function PlayIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M8 5.5v13l11-6.5-11-6.5Z" />
-    </svg>
-  );
-}
-
-function PauseIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <rect x="6.5" y="5" width="4" height="14" rx="1.2" />
-      <rect x="13.5" y="5" width="4" height="14" rx="1.2" />
-    </svg>
-  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -302,16 +283,12 @@ export function CorridorCoordination({ className = "" }: { className?: string })
 
       {/* Controls + live status (text labels, not color alone) */}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-        <button
-          type="button"
-          onClick={() => setRunning((r) => !r)}
-          className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-navy-700 px-5 py-2 text-base font-semibold text-white transition-colors hover:bg-navy-600"
-        >
+        <Button variant="primary" size="sm" onClick={() => setRunning((r) => !r)}>
           {running ? <PauseIcon /> : <PlayIcon />}
           {running
             ? t({ th: "หยุดชั่วคราว (Pause)", en: "Pause" })
             : t({ th: "เล่น Green Wave (Play)", en: "Play the green wave" })}
-        </button>
+        </Button>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           {JUNCTIONS.map((j, i) => {
             const sig = signals[i];

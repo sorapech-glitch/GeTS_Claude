@@ -15,6 +15,7 @@ import {
   GLOSSARY_CATEGORY_META,
   GlossaryCard,
 } from "@/components/GlossaryCard";
+import { ArrowRightIcon } from "@/components/icons";
 
 /* ------------------------------------------------------------------ */
 /* Static helpers (data never changes at runtime)                      */
@@ -45,7 +46,7 @@ const CATEGORY_DOT: Record<GlossaryCategory, string> = {
   timing: "bg-blue-400",
   detection: "bg-accent-400",
   performance: "bg-violet-400",
-  coordination: "bg-green-400",
+  coordination: "bg-navy-400",
 };
 
 /** Match against both languages so search works whichever language is active. */
@@ -73,20 +74,6 @@ function SearchIcon() {
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M5 12h14m-6-6 6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
       />
     </svg>
   );

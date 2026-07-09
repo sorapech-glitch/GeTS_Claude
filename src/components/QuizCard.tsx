@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/i18n";
 import type { QuizQuestion } from "@/lib/types";
-import { Callout } from "@/components/ui";
+import { ArrowRightIcon } from "@/components/icons";
+import { Button, Callout } from "@/components/ui";
 
 /** Choice letters shown in front of each answer. */
 const LETTERS = ["A", "B", "C", "D", "E", "F"];
@@ -33,20 +35,6 @@ function CrossIcon() {
         stroke="currentColor"
         strokeWidth="2.4"
         strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M5 12h14m-6-6 6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
       />
     </svg>
   );
@@ -89,6 +77,14 @@ export function QuizCard({
 }: QuizCardProps) {
   const { t } = useLanguage();
 
+  // QuizPage remounts this card per question (via `key`), so this runs once
+  // per question: move keyboard focus onto the new question heading instead
+  // of letting it drop to <body> when the previous card unmounts.
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    headingRef.current?.focus({ preventScroll: true });
+  }, []);
+
   const answered = selectedChoiceId !== null;
   const isCorrect = selectedChoiceId === question.correctChoiceId;
   const correctIndex = question.choices.findIndex(
@@ -107,7 +103,7 @@ export function QuizCard({
             en: `Question ${index + 1} of ${total}`,
           })}
         </p>
-        <p className="text-sm font-medium tabular-nums text-navy-400">
+        <p className="text-sm font-medium tabular-nums text-navy-500">
           {progressPct}%
         </p>
       </div>
@@ -129,7 +125,11 @@ export function QuizCard({
       </div>
 
       {/* Question */}
-      <h2 className="mt-6 text-xl font-bold leading-relaxed text-navy-900 sm:text-2xl">
+      <h2
+        ref={headingRef}
+        tabIndex={-1}
+        className="mt-6 text-xl font-bold leading-relaxed text-navy-900 sm:text-2xl"
+      >
         {t(question.question)}
       </h2>
 
@@ -164,7 +164,7 @@ export function QuizCard({
               };
             } else {
               boxStyles = "border-navy-100 bg-white text-navy-500 opacity-60";
-              letterStyles = "border-navy-100 bg-navy-50 text-navy-400";
+              letterStyles = "border-navy-100 bg-navy-50 text-navy-500";
             }
           }
 
@@ -172,8 +172,10 @@ export function QuizCard({
             <button
               key={choice.id}
               type="button"
-              disabled={answered}
-              onClick={() => onSelect(choice.id)}
+              aria-disabled={answered}
+              onClick={() => {
+                if (!answered) onSelect(choice.id);
+              }}
               className={`flex min-h-12 w-full items-start gap-3 rounded-xl border-2 px-4 py-3 text-left transition-colors ${boxStyles}`}
             >
               <span
@@ -230,16 +232,12 @@ export function QuizCard({
               <p>{t(question.explanation)}</p>
             </Callout>
             <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={onNext}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-navy-700 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-navy-600"
-              >
+              <Button variant="primary" size="md" onClick={onNext}>
                 {isLast
                   ? t({ th: "ดูผลคะแนน", en: "See results" })
                   : t({ th: "ข้อถัดไป", en: "Next" })}
                 <ArrowRightIcon />
-              </button>
+              </Button>
             </div>
           </div>
         )}

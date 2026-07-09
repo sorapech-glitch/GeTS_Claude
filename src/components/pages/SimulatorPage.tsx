@@ -25,6 +25,7 @@ import type {
 import {
   ACCENT_STYLES,
   Badge,
+  Button,
   ButtonLink,
   Callout,
   Card,
@@ -33,6 +34,7 @@ import {
   SectionHeading,
   type BadgeTone,
 } from "@/components/ui";
+import { ArrowRightIcon, PauseIcon, PlayIcon } from "@/components/icons";
 import { IntersectionDiagram } from "@/components/IntersectionDiagram";
 import { TrafficLightAnimation } from "@/components/TrafficLightAnimation";
 import { SimulatorControlPanel } from "@/components/SimulatorControlPanel";
@@ -102,14 +104,14 @@ const MODE_BANNER: Record<
   va: {
     name: { th: "โหมด Vehicle Actuated (VA)", en: "Vehicle Actuated (VA) mode" },
     text: {
-      th: "ไฟเขียวยืดตามรถที่มาถึง สูงสุดไม่เกิน Max Green — ถนนรองได้ไฟเขียวเฉพาะเมื่อตัวตรวจจับพบรถ",
+      th: "ไฟเขียวยืดตามรถที่มาถึง สูงสุดไม่เกิน Max Green — ถนนรองได้ไฟเขียวเฉพาะเมื่ออุปกรณ์ตรวจจับพบรถ",
       en: "Green extends with each arriving vehicle up to Max Green — the side road is served only when detectors see a vehicle.",
     },
   },
   adaptive: {
     name: { th: "โหมด Adaptive", en: "Adaptive mode" },
     text: {
-      th: "แบ่งเวลาเขียวใหม่ทุกๆ รอบตามแถวรถที่วัดได้จริง — นี่คือแบบจำลองอย่างง่ายเพื่อการเรียนรู้ (This is a simplified learning model.)",
+      th: "แบ่งเวลาเขียวใหม่ทุก ๆ รอบตามแถวรถที่วัดได้จริง — นี่คือแบบจำลองอย่างง่ายเพื่อการเรียนรู้ (This is a simplified learning model.)",
       en: "Green time is re-allocated every cycle from measured queues. This is a simplified learning model.",
     },
   },
@@ -208,9 +210,6 @@ export function SimulatorPage() {
     en: `Simulated intersection — ${t(PHASE_LABEL[simState.phase])}, ${waitingNow} vehicles waiting`,
   });
 
-  const transportButton =
-    "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-colors";
-
   return (
     <>
       <PageHero
@@ -269,32 +268,24 @@ export function SimulatorPage() {
             <Card>
               {/* Transport controls */}
               <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => setRunning((r) => !r)}
-                  className={`${transportButton} bg-navy-800 text-white hover:bg-navy-700`}
                 >
                   {running ? (
                     <>
-                      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                        <path d="M4 2h3v12H4zM9 2h3v12H9z" fill="currentColor" />
-                      </svg>
+                      <PauseIcon />
                       {t({ th: "หยุดชั่วคราว", en: "Pause" })}
                     </>
                   ) : (
                     <>
-                      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                        <path d="M4 2.5v11l9-5.5-9-5.5Z" fill="currentColor" />
-                      </svg>
+                      <PlayIcon />
                       {t({ th: "เล่น", en: "Play" })}
                     </>
                   )}
-                </button>
-                <button
-                  type="button"
-                  onClick={reset}
-                  className={`${transportButton} border border-navy-300 text-navy-800 hover:border-navy-500 hover:bg-navy-50`}
-                >
+                </Button>
+                <Button variant="outline" size="sm" onClick={reset}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                     <path
                       d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"
@@ -305,7 +296,7 @@ export function SimulatorPage() {
                     />
                   </svg>
                   {t({ th: "เริ่มใหม่", en: "Reset" })}
-                </button>
+                </Button>
                 <div
                   role="group"
                   aria-label={t({ th: "ความเร็วการจำลอง", en: "Simulation speed" })}
@@ -464,10 +455,10 @@ export function SimulatorPage() {
                     en: "What is the controller doing?",
                   })}
                 </h3>
-                <p
-                  aria-live="polite"
-                  className="mt-3 text-sm leading-relaxed text-navy-700"
-                >
+                {/* Timer-driven readout — deliberately NOT aria-live: it
+                    changes every few simulated seconds and would flood a
+                    screen reader while the simulation runs. */}
+                <p className="mt-3 text-sm leading-relaxed text-navy-700">
                   {t(outputs.explanation)}
                 </p>
               </Card>
@@ -524,13 +515,13 @@ export function SimulatorPage() {
             <Badge tone="accent">2</Badge>
             <h3 className="mt-3 text-base font-bold text-navy-900">
               {t({
-                th: "ปิดตัวตรวจจับในโหมด VA",
+                th: "ปิดอุปกรณ์ตรวจจับในโหมด VA",
                 en: "Switch detectors off in VA mode",
               })}
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-navy-600">
               {t({
-                th: "เลือกโหมด VA แล้วปิดตัวตรวจจับ (Detector) ระบบจะมองไม่เห็นรถและกลับไปทำงานเหมือน Fixed Time ทันที — ตัวตรวจจับคือหัวใจของ VA",
+                th: "เลือกโหมด VA แล้วปิดอุปกรณ์ตรวจจับรถ (Detector) ระบบจะมองไม่เห็นรถและกลับไปทำงานเหมือน Fixed Time ทันที — อุปกรณ์ตรวจจับคือหัวใจของ VA",
                 en: "In VA mode, turn detectors off — the controller instantly behaves like Fixed Time. Detectors are the heart of VA.",
               })}
             </p>
@@ -554,20 +545,26 @@ export function SimulatorPage() {
       </Section>
 
       {/* ============================ Next module =================== */}
-      <Section>
-        <div className="rounded-3xl bg-navy-900 px-6 py-12 text-center text-white sm:px-12">
-          <h2 className="text-2xl font-bold sm:text-3xl">
-            {t({ th: "บทเรียนถัดไป", en: "Next module" })}
-          </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-navy-200">
-            {t({
-              th: "เข้าใจพฤติกรรมของแต่ละระบบจากซิมูเลเตอร์แล้ว ลองทดสอบความเข้าใจ หรือย้อนดูตารางเปรียบเทียบทั้งสามระบบ",
-              en: "Seen how each system behaves? Test your understanding, or revisit the side-by-side comparison of all three systems.",
-            })}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+      <Section dark>
+        <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-accent-400">
+              {t({ th: "บทเรียนถัดไป", en: "Next module" })}
+            </p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+              {t({ th: "ทดสอบความเข้าใจ", en: "Test your understanding" })}
+            </h2>
+            <p className="mt-3 max-w-2xl text-navy-200">
+              {t({
+                th: "เข้าใจพฤติกรรมของแต่ละระบบจากซิมูเลเตอร์แล้ว ลองทดสอบความเข้าใจ หรือย้อนดูตารางเปรียบเทียบทั้งสามระบบ",
+                en: "Seen how each system behaves? Test your understanding, or revisit the side-by-side comparison of all three systems.",
+              })}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
             <ButtonLink href="/quiz" variant="secondary">
               {t({ th: "ทำแบบทดสอบ (Quiz)", en: "Take the quiz" })}
+              <ArrowRightIcon />
             </ButtonLink>
             <ButtonLink href="/compare" variant="onDark">
               {t({ th: "ตารางเปรียบเทียบระบบ", en: "Compare the systems" })}

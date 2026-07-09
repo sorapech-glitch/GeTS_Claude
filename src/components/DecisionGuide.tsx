@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n";
 import { systemsById } from "@/data/systems";
+import { ArrowRightIcon } from "@/components/icons";
 import { ACCENT_STYLES, Badge, Callout } from "@/components/ui";
 import type { Bi, SystemId } from "@/lib/types";
 
@@ -77,27 +78,6 @@ function ArrowDownIcon() {
   );
 }
 
-function ArrowRightIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="transition-transform group-hover:translate-x-0.5"
-    >
-      <path
-        d="M5 12h14m-6-6 6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 export function DecisionGuide({ className = "" }: { className?: string }) {
   const { t } = useLanguage();
 
@@ -105,7 +85,7 @@ export function DecisionGuide({ className = "" }: { className?: string }) {
     <div className={className}>
       {/* Start node */}
       <div className="mx-auto max-w-xl rounded-2xl border-2 border-navy-300 bg-white px-6 py-5 text-center shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent-600">
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent-700">
           {t({ th: "จุดเริ่มต้น", en: "Start here" })}
         </p>
         <p className="mt-1.5 text-lg font-bold text-navy-900">
@@ -175,7 +155,7 @@ export function DecisionGuide({ className = "" }: { className?: string }) {
                 </p>
                 <span className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-navy-900">
                   {t({ th: "ไปที่บทเรียน", en: "Open the module" })}
-                  <ArrowRightIcon />
+                  <ArrowRightIcon className="transition-transform group-hover:translate-x-0.5" />
                 </span>
               </Link>
             </li>

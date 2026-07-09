@@ -25,6 +25,7 @@
   /* ---- Tech accent (detectors, data, interactive highlights) ---- */
   --color-accent-50: #ecfeff;
   --color-accent-100: #cffafe;
+  --color-accent-200: #a5f3fc;
   --color-accent-300: #67e8f9;
   --color-accent-400: #22d3ee;
   --color-accent-500: #06b6d4;
@@ -100,6 +101,10 @@ li {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
   *,
   *::before,
   *::after {

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui";
 import { SystemComparisonTable } from "@/components/SystemComparisonTable";
 import { DecisionGuide } from "@/components/DecisionGuide";
+import { ArrowRightIcon } from "@/components/icons";
 
 /* ------------------------------------------------------------------ */
 /* Small inline icons (decorative)                                     */
@@ -60,20 +61,6 @@ function NetworkIcon() {
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M5 12h14m-6-6 6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
       />
     </svg>
   );
@@ -232,7 +219,7 @@ export function ComparePage() {
         <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
           <div>
             <p className="text-sm font-semibold uppercase tracking-widest text-accent-400">
-              {t({ th: "ขั้นตอนถัดไป", en: "Next step" })}
+              {t({ th: "บทเรียนถัดไป", en: "Next module" })}
             </p>
             <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
               {t({

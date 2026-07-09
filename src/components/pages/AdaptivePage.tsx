@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { systemsById } from "@/data/systems";
-import type { Bi, LightColor } from "@/lib/types";
+import type { Bi, KeyTerm, LightColor } from "@/lib/types";
 import {
   Badge,
+  Button,
   ButtonLink,
   Callout,
   Card,
@@ -14,13 +15,14 @@ import {
   Section,
   SectionHeading,
 } from "@/components/ui";
+import { ArrowRightIcon, PauseIcon, PlayIcon } from "@/components/icons";
 import { IntersectionDiagram } from "@/components/IntersectionDiagram";
 import { CorridorCoordination } from "@/components/CorridorCoordination";
 
 /* ------------------------------------------------------------------ */
 /* Adaptive demo model                                                 */
 /*                                                                     */
-/* A fixed-length cycle (24 s) whose green split is RECOMPUTED at the  */
+/* A fixed-length cycle (30 s) whose green split is RECOMPUTED at the  */
 /* start of every cycle from the queues measured at that moment:       */
 /*   N–S green share = (qN + qS) / total queued, clamped 20–80%.       */
 /* Demand rotates through three scenarios so the split visibly moves.  */
@@ -30,10 +32,12 @@ import { CorridorCoordination } from "@/components/CorridorCoordination";
 const MS_PER_SIM_SECOND = 150;
 const TICK_MS = 50;
 
-const YELLOW_TIME = 2;
+const YELLOW_TIME = 3;
+/** All-red clearance between phases — both directions red. */
+const ALL_RED_TIME = 2;
 /** Green seconds shared between N–S and E–W each cycle. */
 const GREEN_BUDGET = 20;
-const DEMO_CYCLE = GREEN_BUDGET + YELLOW_TIME * 2; // 24 s
+const DEMO_CYCLE = GREEN_BUDGET + (YELLOW_TIME + ALL_RED_TIME) * 2; // 30 s
 const DISCHARGE_RATE = 1.0;
 const DEMAND_LOOP = 120;
 
@@ -119,23 +123,6 @@ function roundQueues(q: QueueMap): QueueMap {
 /* Small inline icons                                                  */
 /* ------------------------------------------------------------------ */
 
-function PlayIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M8 5.5v13l11-6.5-11-6.5Z" />
-    </svg>
-  );
-}
-
-function PauseIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <rect x="6.5" y="5" width="4" height="14" rx="1.2" />
-      <rect x="13.5" y="5" width="4" height="14" rx="1.2" />
-    </svg>
-  );
-}
-
 function CheckIcon() {
   return (
     <svg
@@ -147,14 +134,6 @@ function CheckIcon() {
       className="mt-1 shrink-0 text-signal-green-deep"
     >
       <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -202,53 +181,59 @@ function ClockIcon() {
 
 /* ------------------------------------------------------------------ */
 /* Real-time data cards content                                        */
+/*                                                                     */
+/* Term names and Thai translations come from the shared keyTerms in   */
+/* src/data/systems.ts — only the icon and the input-focused prose     */
+/* below are page-specific.                                            */
 /* ------------------------------------------------------------------ */
 
 interface DataCardContent {
   icon: ReactNode;
-  term: string;
-  termTh: string;
+  keyTerm: KeyTerm;
   description: Bi;
 }
 
-const DATA_CARDS: DataCardContent[] = [
+const DATA_CARD_EXTRAS: Array<{ term: string; icon: ReactNode; description: Bi }> = [
   {
-    icon: <QueueIcon />,
     term: "Queue Length",
-    termTh: "ความยาวแถวรถ",
+    icon: <QueueIcon />,
     description: {
       th: "วัดจำนวนรถที่ต่อแถวรอหน้าไฟแดงของแต่ละทิศทาง ถ้าแถวของทิศทางไหนยาวขึ้นเรื่อย ๆ แปลว่าไฟเขียวที่ให้ยังไม่พอ ระบบจึงใช้ค่านี้เพิ่มเวลาเขียว (Green Time) ให้ทิศทางที่มีรถสะสมในรอบถัดไป",
       en: "Measures how many vehicles queue at the red on each approach. A growing queue means the current green is not enough, so the system uses this signal to shift more green time to that approach in the next cycles.",
     },
   },
   {
-    icon: <VolumeIcon />,
     term: "Traffic Volume",
-    termTh: "ปริมาณจราจร",
+    icon: <VolumeIcon />,
     description: {
       th: "นับจำนวนรถที่ผ่านจุดตรวจจับต่อหน่วยเวลา เช่น คันต่อชั่วโมง ระบบใช้ค่านี้ประเมินความต้องการใช้ทางของแต่ละทิศทาง เพื่อเลือกรอบสัญญาณ (Cycle Time) และสัดส่วนเวลาเขียว (Split) ที่เหมาะสม",
       en: "Counts vehicles passing a detector per unit time, e.g. vehicles per hour. The system uses it to estimate demand on each approach and choose a suitable cycle time and green split.",
     },
   },
   {
-    icon: <GaugeIcon />,
     term: "Degree of Saturation",
-    termTh: "ระดับการอิ่มตัว",
+    icon: <GaugeIcon />,
     description: {
       th: "เปรียบเทียบปริมาณรถที่มาจริงกับความสามารถระบายรถของไฟเขียวที่ให้ ถ้าค่าเข้าใกล้ 100% ระบบรู้ว่าเฟสนั้นใกล้ล้น จึงเกลี่ยเวลาเขียวใหม่ให้ทุกทิศทางรับภาระใกล้เคียงกัน",
       en: "Compares actual arrivals with how much traffic the green can discharge. As it nears 100% the system knows that phase is close to overload, and rebalances green so every approach carries a similar load.",
     },
   },
   {
-    icon: <ClockIcon />,
     term: "Travel Time",
-    termTh: "เวลาเดินทาง",
+    icon: <ClockIcon />,
     description: {
       th: "วัดเวลาที่รถใช้เดินทางระหว่างสองจุดบนเส้นทาง ระบบใช้ตรวจสอบผลของการปรับสัญญาณและค่าเหลื่อมเวลา (Offset) ระหว่างแยก ว่าทำให้การเดินทางทั้งเส้นทางเร็วขึ้นจริงหรือไม่",
       en: "Measures how long vehicles take between two points on the corridor. The system uses it to verify whether signal changes and inter-junction offsets actually make end-to-end journeys faster.",
     },
   },
 ];
+
+const DATA_CARDS: DataCardContent[] = DATA_CARD_EXTRAS.flatMap(
+  ({ term, icon, description }) => {
+    const keyTerm = systemsById["adaptive"].keyTerms.find((k) => k.term === term);
+    return keyTerm ? [{ keyTerm, icon, description }] : [];
+  },
+);
 
 /* ------------------------------------------------------------------ */
 /* Local vs Network mini-diagrams                                      */
@@ -355,7 +340,7 @@ export function AdaptivePage() {
 
       const g = nsGreenRef.current;
       const ns = phaseSignal(ct, 0, g);
-      const ew = phaseSignal(ct, g + YELLOW_TIME, GREEN_BUDGET - g);
+      const ew = phaseSignal(ct, g + YELLOW_TIME + ALL_RED_TIME, GREEN_BUDGET - g);
       const phase = demandPhaseAt(totalTRef.current);
       const q = queuesRef.current;
       q.north = stepQueue(q.north, ns, phase.rates.north, dt);
@@ -371,7 +356,7 @@ export function AdaptivePage() {
   }, [running]);
 
   const nsSig = phaseSignal(cycleT, 0, nsGreen);
-  const ewSig = phaseSignal(cycleT, nsGreen + YELLOW_TIME, GREEN_BUDGET - nsGreen);
+  const ewSig = phaseSignal(cycleT, nsGreen + YELLOW_TIME + ALL_RED_TIME, GREEN_BUDGET - nsGreen);
   const ewGreen = GREEN_BUDGET - nsGreen;
   const nsPct = Math.round((nsGreen / GREEN_BUDGET) * 100);
   const ewPct = 100 - nsPct;
@@ -478,15 +463,15 @@ export function AdaptivePage() {
         />
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {DATA_CARDS.map((card) => (
-            <Card key={card.term} className="h-full">
+            <Card key={card.keyTerm.term} className="h-full">
               <span
                 aria-hidden="true"
                 className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-system-violet"
               >
                 {card.icon}
               </span>
-              <h3 className="mt-4 text-lg font-semibold text-navy-900">{card.term}</h3>
-              <p className="text-sm font-medium text-system-violet">{card.termTh}</p>
+              <h3 className="mt-4 text-lg font-semibold text-navy-900">{card.keyTerm.term}</h3>
+              <p className="text-sm font-medium text-violet-600">{card.keyTerm.th}</p>
               <p className="mt-3 text-sm leading-relaxed text-navy-600">{t(card.description)}</p>
             </Card>
           ))}
@@ -561,16 +546,16 @@ export function AdaptivePage() {
           <div className="space-y-6">
             <Card>
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => setRunning((r) => !r)}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-navy-700 px-5 py-2 text-base font-semibold text-white transition-colors hover:bg-navy-600"
                 >
                   {running ? <PauseIcon /> : <PlayIcon />}
                   {running
                     ? t({ th: "หยุดชั่วคราว (Pause)", en: "Pause" })
                     : t({ th: "เล่น (Play)", en: "Play" })}
-                </button>
+                </Button>
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge tone="violet">
                     {t({ th: "สถานการณ์: ", en: "Scenario: " })}
@@ -628,18 +613,15 @@ export function AdaptivePage() {
                 </div>
                 <p className="mt-2 text-xs text-navy-500">
                   {t({
-                    th: `แบ่งจากงบไฟเขียวรวม ${GREEN_BUDGET} วินาทีต่อรอบ (ไม่รวมไฟเหลืองช่วงละ ${YELLOW_TIME} วินาที) คำนวณใหม่ทุกต้นรอบจากแถวรถที่วัดได้`,
-                    en: `Shared from a ${GREEN_BUDGET}-second green budget per cycle (plus ${YELLOW_TIME}s of yellow per phase), recomputed each cycle from the measured queues.`,
+                    th: `แบ่งจากงบไฟเขียวรวม ${GREEN_BUDGET} วินาทีต่อรอบ (ไม่รวมไฟเหลืองช่วงละ ${YELLOW_TIME} วินาที และช่วงแดงพร้อมกันทุกทิศ (All-Red) ช่วงละ ${ALL_RED_TIME} วินาที) คำนวณใหม่ทุกต้นรอบจากแถวรถที่วัดได้`,
+                    en: `Shared from a ${GREEN_BUDGET}-second green budget per cycle (plus ${YELLOW_TIME}s of yellow and ${ALL_RED_TIME}s of all-red clearance per phase), recomputed each cycle from the measured queues.`,
                   })}
                 </p>
               </div>
 
               {/* Live caption */}
-              <div
-                aria-live="polite"
-                className="mt-6 rounded-2xl border border-violet-200 bg-violet-50 p-4"
-              >
-                <p className="text-sm font-semibold uppercase tracking-wide text-system-violet">
+              <div className="mt-6 rounded-2xl border border-violet-200 bg-violet-50 p-4">
+                <p className="text-sm font-semibold uppercase tracking-wide text-violet-600">
                   {t({ th: "ระบบกำลังทำอะไรอยู่", en: "What the system is doing" })}
                 </p>
                 <p className="mt-1 font-medium text-navy-800">{t(liveCaption)}</p>
@@ -875,7 +857,7 @@ export function AdaptivePage() {
           {sys.keyTerms.map((term) => (
             <Card key={term.term} className="h-full">
               <h3 className="text-lg font-semibold text-navy-900">{term.term}</h3>
-              <p className="text-sm font-medium text-system-violet">{term.th}</p>
+              <p className="text-sm font-medium text-violet-600">{term.th}</p>
               <p className="mt-3 text-sm leading-relaxed text-navy-600">{t(term.description)}</p>
             </Card>
           ))}

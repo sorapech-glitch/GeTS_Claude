@@ -26,7 +26,7 @@ export const GLOSSARY_CATEGORY_META: Record<
   },
   coordination: {
     label: { th: "การประสานสัญญาณ (Coordination)", en: "Coordination" },
-    tone: "green",
+    tone: "neutral",
   },
 };
 

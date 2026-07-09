@@ -6,6 +6,7 @@ import { systemsById } from "@/data/systems";
 import type { Bi, LightColor } from "@/lib/types";
 import {
   Badge,
+  Button,
   ButtonLink,
   Callout,
   Card,
@@ -15,6 +16,7 @@ import {
   SectionHeading,
   type BadgeTone,
 } from "@/components/ui";
+import { ArrowRightIcon, PauseIcon, PlayIcon } from "@/components/icons";
 import { IntersectionDiagram } from "@/components/IntersectionDiagram";
 import { TrafficLightAnimation } from "@/components/TrafficLightAnimation";
 import {
@@ -168,23 +170,6 @@ function roundQueues(q: QueueMap): QueueMap {
 /* Small inline icons                                                  */
 /* ------------------------------------------------------------------ */
 
-function PlayIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M8 5.5v13l11-6.5-11-6.5Z" />
-    </svg>
-  );
-}
-
-function PauseIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <rect x="6.5" y="5" width="4" height="14" rx="1.2" />
-      <rect x="13.5" y="5" width="4" height="14" rx="1.2" />
-    </svg>
-  );
-}
-
 function CheckIcon() {
   return (
     <svg
@@ -199,20 +184,6 @@ function CheckIcon() {
         d="m5 13 4 4L19 7"
         stroke="currentColor"
         strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M5 12h14m-6-6 6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -421,16 +392,16 @@ export function FixedTimePage() {
           <div className="space-y-6">
             <Card>
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => setRunning((r) => !r)}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-navy-700 px-5 py-2 text-base font-semibold text-white transition-colors hover:bg-navy-600"
                 >
                   {running ? <PauseIcon /> : <PlayIcon />}
                   {running
                     ? t({ th: "หยุดชั่วคราว (Pause)", en: "Pause" })
                     : t({ th: "เล่น (Play)", en: "Play" })}
-                </button>
+                </Button>
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge tone={segment.tone}>{t(segment.label)}</Badge>
                   <span className="font-mono text-sm tabular-nums text-navy-600">
@@ -557,7 +528,7 @@ export function FixedTimePage() {
           {sys.keyTerms.map((term) => (
             <Card key={term.term} className="h-full">
               <h3 className="text-lg font-semibold text-navy-900">{term.term}</h3>
-              <p className="text-sm font-medium text-system-blue">{term.th}</p>
+              <p className="text-sm font-medium text-blue-600">{term.th}</p>
               <p className="mt-3 text-sm leading-relaxed text-navy-600">
                 {t(term.description)}
               </p>

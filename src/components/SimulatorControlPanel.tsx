@@ -110,6 +110,9 @@ export function SimulatorControlPanel({
   const [greenClampHint, setGreenClampHint] = useState(false);
 
   const isFixed = settings.mode === "fixed";
+  // With detectors off, the engine runs the fixed schedule from
+  // `cycleLength` even in VA/Adaptive — so the slider stays live there.
+  const usesFixedSchedule = isFixed || !settings.detectorEnabled;
   const activeScenario =
     simulatorScenarios.find((s) => s.id === activeScenarioId) ?? null;
 
@@ -255,7 +258,7 @@ export function SimulatorControlPanel({
       <div className={isFixed ? "opacity-50" : ""}>
         <div className="flex items-center justify-between gap-3">
           <span id={detectorLabelId} className="text-sm font-semibold text-navy-900">
-            {t({ th: "ตัวตรวจจับ (Detector)", en: "Detectors" })}
+            {t({ th: "อุปกรณ์ตรวจจับรถ (Detector)", en: "Detectors" })}
           </span>
           <button
             type="button"
@@ -293,7 +296,7 @@ export function SimulatorControlPanel({
         {isFixed && (
           <FieldHint>
             {t({
-              th: "Fixed Time ไม่ใช้ตัวตรวจจับ — ระบบนับเวลาตามตารางเท่านั้น",
+              th: "Fixed Time ไม่ใช้อุปกรณ์ตรวจจับ — ระบบนับเวลาตามตารางเท่านั้น",
               en: "Fixed Time does not use detectors — it only follows its schedule.",
             })}
           </FieldHint>
@@ -301,7 +304,7 @@ export function SimulatorControlPanel({
         {!isFixed && !settings.detectorEnabled && (
           <FieldHint>
             {t({
-              th: "เมื่อปิดตัวตรวจจับ ระบบ VA/Adaptive จะมองไม่เห็นรถ และทำงานเหมือน Fixed Time",
+              th: "เมื่อปิดอุปกรณ์ตรวจจับ ระบบ VA/Adaptive จะมองไม่เห็นรถ และทำงานเหมือน Fixed Time",
               en: "With detectors off, VA/Adaptive cannot see vehicles and behaves like Fixed Time.",
             })}
           </FieldHint>
@@ -314,18 +317,28 @@ export function SimulatorControlPanel({
           {t({ th: "ตั้งค่าเวลา (Timing)", en: "Timing parameters" })}
         </legend>
 
-        <SliderField
-          label={t({ th: "รอบสัญญาณไฟ (Cycle Length)", en: "Cycle length" })}
-          value={settings.cycleLength}
-          min={40}
-          max={120}
-          disabled={!isFixed}
-          hint={t({
-            th: "ใช้เฉพาะโหมด Fixed Time — โหมด VA/Adaptive ปรับรอบเองตามรถ",
-            en: "Fixed Time only — VA/Adaptive set their own cycle from traffic.",
-          })}
-          onChange={(v) => onChange({ cycleLength: v })}
-        />
+        <div>
+          <SliderField
+            label={t({ th: "รอบสัญญาณไฟ (Cycle Length)", en: "Cycle length" })}
+            value={settings.cycleLength}
+            min={40}
+            max={120}
+            disabled={!usesFixedSchedule}
+            hint={t({
+              th: "โหมด VA/Adaptive ที่เปิดอุปกรณ์ตรวจจับจะปรับรอบเองตามรถ จึงไม่ใช้ค่านี้",
+              en: "VA/Adaptive with detectors on set their own cycle from traffic — this value is not used.",
+            })}
+            onChange={(v) => onChange({ cycleLength: v })}
+          />
+          {!isFixed && usesFixedSchedule && (
+            <FieldHint>
+              {t({
+                th: "เมื่อปิดอุปกรณ์ตรวจจับ โหมด VA/Adaptive จะกลับไปใช้ตารางเวลาคงที่ตามค่ารอบสัญญาณไฟนี้",
+                en: "With detectors off, VA/Adaptive fall back to the fixed schedule set by this cycle length.",
+              })}
+            </FieldHint>
+          )}
+        </div>
 
         <SliderField
           label={t({ th: "เวลาเขียวต่ำสุด (Min Green)", en: "Min green" })}
@@ -360,7 +373,7 @@ export function SimulatorControlPanel({
           max={6}
           disabled={isFixed}
           hint={t({
-            th: "Fixed Time ไม่ใช้ตัวตรวจจับ จึงไม่มีการต่อเวลาตามช่องว่าง (Gap)",
+            th: "Fixed Time ไม่ใช้อุปกรณ์ตรวจจับ จึงไม่มีการต่อเวลาตามช่องว่าง (Gap)",
             en: "Fixed Time has no detectors, so gap-based extension does not apply.",
           })}
           onChange={(v) => onChange({ gapTime: v })}

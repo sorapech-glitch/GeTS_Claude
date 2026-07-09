@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { SystemAccent } from "@/lib/types";
 
 /* ------------------------------------------------------------------ */
@@ -11,21 +11,21 @@ export const ACCENT_STYLES: Record<
   { text: string; bg: string; softBg: string; border: string; ring: string }
 > = {
   blue: {
-    text: "text-system-blue",
+    text: "text-blue-600",
     bg: "bg-system-blue",
     softBg: "bg-blue-50",
     border: "border-blue-200",
     ring: "ring-blue-500/20",
   },
   cyan: {
-    text: "text-accent-600",
+    text: "text-accent-700",
     bg: "bg-accent-500",
     softBg: "bg-accent-50",
-    border: "border-accent-100",
+    border: "border-accent-200",
     ring: "ring-cyan-500/20",
   },
   violet: {
-    text: "text-system-violet",
+    text: "text-violet-600",
     bg: "bg-system-violet",
     softBg: "bg-violet-50",
     border: "border-violet-200",
@@ -81,7 +81,7 @@ export function SectionHeading({
       {eyebrow && (
         <p
           className={`text-sm font-semibold uppercase tracking-widest ${
-            dark ? "text-accent-400" : "text-accent-600"
+            dark ? "text-accent-400" : "text-accent-700"
           }`}
         >
           {eyebrow}
@@ -307,6 +307,8 @@ export function Callout({
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "onDark";
 
+export type ButtonSize = "md" | "sm";
+
 const BUTTON_STYLES: Record<ButtonVariant, string> = {
   primary:
     "bg-navy-700 text-white hover:bg-navy-600 focus-visible:outline-navy-700",
@@ -318,24 +320,60 @@ const BUTTON_STYLES: Record<ButtonVariant, string> = {
     "border border-navy-500 text-white hover:border-navy-300 hover:bg-navy-800",
 };
 
+const BUTTON_SIZES: Record<ButtonSize, string> = {
+  md: "min-h-12 px-6 py-3 text-base",
+  sm: "min-h-11 px-5 py-2 text-sm",
+};
+
+const BUTTON_BASE =
+  "inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors";
+
 export function ButtonLink({
   href,
   variant = "primary",
+  size = "md",
   children,
   className = "",
 }: {
   href: string;
   variant?: ButtonVariant;
+  size?: ButtonSize;
   children: ReactNode;
   className?: string;
 }) {
   return (
     <Link
       href={href}
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 py-3 text-base font-semibold transition-colors ${BUTTON_STYLES[variant]} ${className}`}
+      className={`${BUTTON_BASE} ${BUTTON_SIZES[size]} ${BUTTON_STYLES[variant]} ${className}`}
     >
       {children}
     </Link>
+  );
+}
+
+export interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+}
+
+/** A real `<button>` sharing the ButtonLink look; `type="button"` unless overridden. */
+export function Button({
+  variant = "primary",
+  size = "md",
+  type = "button",
+  className = "",
+  children,
+  ...rest
+}: ButtonProps) {
+  return (
+    <button
+      type={type}
+      className={`${BUTTON_BASE} ${BUTTON_SIZES[size]} ${BUTTON_STYLES[variant]} ${className}`}
+      {...rest}
+    >
+      {children}
+    </button>
   );
 }
 

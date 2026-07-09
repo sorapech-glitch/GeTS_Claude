@@ -15,9 +15,11 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { DetectorZone } from "@/components/DetectorZone";
+import { ArrowRightIcon, PauseIcon, PlayIcon } from "@/components/icons";
 import { IntersectionDiagram } from "@/components/IntersectionDiagram";
 import {
   Badge,
+  Button,
   ButtonLink,
   Callout,
   Card,
@@ -152,6 +154,7 @@ type SimPhase =
   | "main-quiet"
   | "vehicle-call"
   | "main-yellow"
+  | "all-red"
   | "min-green"
   | "extension"
   | "gap-out"
@@ -210,6 +213,12 @@ function buildTimeline(): SimFrame[] {
       push({ ew: "red", ns: "yellow", phase: "side-yellow", northQueue: q, ewQueue });
     }
   };
+  /** Short all-red clearance between phases — both directions red. */
+  const allRed = (northQueues: number[], ewQueue: number) => {
+    for (const q of northQueues) {
+      push({ ew: "red", ns: "red", phase: "all-red", northQueue: q, ewQueue });
+    }
+  };
 
   /* ---- Round 1: quiet main road → one call → served green → gap-out ---- */
   mainGreen("main-green", 4, 6); // leftover main-road queue clears
@@ -219,6 +228,7 @@ function buildTimeline(): SimFrame[] {
   push({ ew: "yellow", phase: "main-yellow", northQueue: 1 });
   push({ ew: "yellow", phase: "main-yellow", northQueue: 2, detector: true, ewQueue: 1 });
   push({ ew: "yellow", phase: "main-yellow", northQueue: 2, ewQueue: 1 });
+  allRed([2, 2], 2);
   // Side green: minimum green first…
   side("min-green", 1, 2, true, null, 0, 2);
   side("min-green", 2, 1, true, null, 0, 2);
@@ -234,6 +244,7 @@ function buildTimeline(): SimFrame[] {
   side("extension", 11, 0, false, 1, 2, 5);
   side("gap-out", 12, 0, false, 0, 2, 5);
   sideYellow([0, 0, 0], 5);
+  allRed([0, 0], 5);
 
   /* ---- Round 2: heavy side-road arrivals → green rides to max-out ---- */
   mainGreen("main-green", 4, 5);
@@ -243,6 +254,7 @@ function buildTimeline(): SimFrame[] {
   push({ ew: "yellow", phase: "main-yellow", northQueue: 2 });
   push({ ew: "yellow", phase: "main-yellow", northQueue: 3, detector: true, ewQueue: 1 });
   push({ ew: "yellow", phase: "main-yellow", northQueue: 3, ewQueue: 1 });
+  allRed([3, 3], 2);
   side("min-green", 1, 3, true, null, 0, 2);
   side("min-green", 2, 3, true, null, 0, 2);
   side("min-green", 3, 2, true, null, 0, 3);
@@ -260,6 +272,7 @@ function buildTimeline(): SimFrame[] {
   side("extension", 15, 2, true, GAP_TIME, 5, 6);
   side("max-out", 16, 2, true, 2, 5, 6);
   sideYellow([1, 0, 0], 6);
+  allRed([0, 0], 6); // loops back to round 1's main-road green
 
   return frames;
 }
@@ -282,6 +295,10 @@ const PHASE_CAPTIONS: Record<SimPhase, Bi> = {
   "main-yellow": {
     th: "ตู้ควบคุมตอบสนองการเรียก: ปิดไฟเขียวถนนหลักอย่างปลอดภัยด้วยไฟเหลือง",
     en: "The controller answers the call: the main-road green ends safely through yellow.",
+  },
+  "all-red": {
+    th: "แดงพร้อมกันทุกทิศช่วงสั้น ๆ (All-Red Clearance) เพื่อให้รถคันสุดท้ายพ้นแยกก่อนเปิดไฟเขียวทิศทางใหม่",
+    en: "A brief all-red clearance lets the last vehicles clear the junction before the next direction gets green.",
   },
   "min-green": {
     th: "ถนนรองได้ไฟเขียวอย่างน้อยเท่าเวลาเขียวขั้นต่ำ (Minimum Green) เพื่อให้รถออกตัวได้ปลอดภัย",
@@ -310,6 +327,7 @@ const STATUS_BADGES: Record<SimPhase, { tone: BadgeTone; text: Bi }> = {
   "main-quiet": { tone: "neutral", text: { th: "ไม่มีการเรียก — เขียวค้าง", en: "No call — green holds" } },
   "vehicle-call": { tone: "accent", text: { th: "Vehicle Call — บันทึกการเรียก", en: "Vehicle Call registered" } },
   "main-yellow": { tone: "yellow", text: { th: "ไฟเหลือง (Yellow)", en: "Yellow" } },
+  "all-red": { tone: "red", text: { th: "All-Red — เคลียร์แยก", en: "All-red clearance" } },
   "min-green": { tone: "green", text: { th: "Minimum Green", en: "Minimum Green" } },
   extension: { tone: "yellow", text: { th: "Extension — ต่อขยายไฟเขียว", en: "Extension — green extended" } },
   "gap-out": { tone: "neutral", text: { th: "Gap-out — รถหมด ตัดจบ", en: "Gap-out — demand ended" } },
@@ -460,39 +478,22 @@ function VaSimulator() {
           />
         </div>
 
-        <p
-          aria-live="polite"
-          className="mt-3 min-h-16 rounded-xl bg-navy-50 px-4 py-3 text-center text-sm font-medium text-navy-800"
-        >
+        <p className="mt-3 min-h-16 rounded-xl bg-navy-50 px-4 py-3 text-center text-sm font-medium text-navy-800">
           {t(PHASE_CAPTIONS[frame.phase])}
         </p>
 
         {/* Controls */}
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setPlaying((p) => !p)}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-navy-700 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy-600"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              {playing ? (
-                <path d="M7 5h4v14H7zM13 5h4v14h-4z" />
-              ) : (
-                <path d="M7 4.5 19 12 7 19.5v-15Z" />
-              )}
-            </svg>
+          <Button variant="primary" size="sm" onClick={() => setPlaying((p) => !p)}>
+            {playing ? <PauseIcon /> : <PlayIcon />}
             {playing ? t({ th: "หยุดชั่วคราว", en: "Pause" }) : t({ th: "เล่น", en: "Play" })}
-          </button>
-          <button
-            type="button"
-            onClick={() => setTick(0)}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-navy-300 px-5 py-2 text-sm font-semibold text-navy-800 transition-colors hover:border-navy-500 hover:bg-navy-50"
-          >
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setTick(0)}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M4 10a8 8 0 1 1 2 7M4 10V4m0 6h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             {t({ th: "เริ่มใหม่", en: "Restart" })}
-          </button>
+          </Button>
         </div>
 
         <p className="mt-4 text-xs text-navy-500">
@@ -736,15 +737,14 @@ export function VehicleActuatedPage() {
       {/* 1 ─ Hero */}
       <PageHero
         eyebrow={
-          <div className="flex flex-wrap gap-2">
-            <Badge tone="accent">{t({ th: "บทเรียนที่ 2", en: "Module 2" })}</Badge>
-            <Badge tone="accent">Vehicle Actuated (VA)</Badge>
-          </div>
+          <Badge tone="accent">
+            {t({ th: "บทเรียนที่ 2 จาก 3 · ระบบตอบสนองรถจริง", en: "Module 2 of 3 · The responsive system" })}
+          </Badge>
         }
         title={t(system.name)}
         subtitle={t(system.tagline)}
       >
-        <figure className="rounded-3xl border border-white/10 bg-white/5 p-4 sm:p-6">
+        <figure className="rounded-2xl border border-navy-700 bg-navy-800/60 p-4 sm:p-6">
           <div className="flex justify-center">
             <IntersectionDiagram
               showDetectors
@@ -888,7 +888,7 @@ export function VehicleActuatedPage() {
       {/* 6 ─ Centerpiece interactive demo */}
       <Section id="demo">
         <SectionHeading
-          eyebrow={t({ th: "เดโมโต้ตอบ", en: "Interactive demo" })}
+          eyebrow={t({ th: "เดโมอินเทอร์แอกทีฟ", en: "Interactive demo" })}
           title={t({ th: "ดู VA ทำงานจริงที่แยกจำลอง", en: "Watch VA run a simulated junction" })}
           description={t({
             th: "ถนนหลัก (E–W) ถือไฟเขียวไว้ จนกว่ารถบนถนนรอง (N) จะแตะโซนตรวจจับ — สังเกตป้ายสถานะ Minimum Green, Extension, Gap และเวลาจำลองที่เปลี่ยนทุกวินาที",
@@ -925,7 +925,7 @@ export function VehicleActuatedPage() {
           {system.keyTerms.map((term) => (
             <Card key={term.term}>
               <h3 className="text-lg font-bold text-navy-900">{term.term}</h3>
-              <p className="mt-0.5 text-sm font-medium text-accent-600">{term.th}</p>
+              <p className="mt-0.5 text-sm font-medium text-accent-700">{term.th}</p>
               <p className="mt-3 text-sm text-navy-700">{t(term.description)}</p>
             </Card>
           ))}
@@ -997,9 +997,7 @@ export function VehicleActuatedPage() {
           <div className="mt-2 flex flex-wrap justify-center gap-3">
             <ButtonLink href="/adaptive" variant="secondary">
               {t({ th: "ไปต่อ: Adaptive Control", en: "Continue: Adaptive Control" })}
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <ArrowRightIcon />
             </ButtonLink>
             <ButtonLink href="/fixed-time" variant="onDark">
               {t({ th: "ย้อนกลับ: Fixed Time", en: "Back: Fixed Time" })}

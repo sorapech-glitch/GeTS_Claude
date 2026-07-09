@@ -15,6 +15,8 @@
  * automatically.
  */
 
+import { useLanguage } from "@/lib/i18n";
+
 export interface DetectorZoneProps {
   /** A vehicle is on the zone and a vehicle call is registered. */
   active: boolean;
@@ -31,11 +33,18 @@ export function DetectorZone({
   ariaLabel,
   className = "",
 }: DetectorZoneProps) {
+  const { t } = useLanguage();
   const zoneStroke = active ? "#22d3ee" : "#94a3b8";
   const zoneFill = active ? "rgba(34,211,238,0.28)" : "rgba(148,163,184,0.12)";
   const defaultAria = active
-    ? "มีรถอยู่บนโซนตรวจจับหน้าเส้นหยุด ระบบบันทึกการเรียกแล้ว (A vehicle is on the detector zone before the stop line — a vehicle call is registered)"
-    : "โซนตรวจจับหน้าเส้นหยุดยังว่าง ไม่มีการเรียก (The detector zone before the stop line is empty — no vehicle call)";
+    ? t({
+        th: "มีรถอยู่บนโซนตรวจจับหน้าเส้นหยุด ระบบบันทึกการเรียกแล้ว",
+        en: "A vehicle is on the detector zone before the stop line — a vehicle call is registered",
+      })
+    : t({
+        th: "โซนตรวจจับหน้าเส้นหยุดยังว่าง ไม่มีการเรียก",
+        en: "The detector zone before the stop line is empty — no vehicle call",
+      });
 
   return (
     <figure className={`inline-flex w-full flex-col items-center gap-2 ${className}`}>
@@ -141,10 +150,10 @@ export function DetectorZone({
 
         {/* Micro labels (bilingual technical terms kept visible) */}
         <text x="240" y="150" textAnchor="middle" fontSize="12" fontWeight="600" fill="#24427a">
-          โซนตรวจจับ (Detector Zone)
+          {t({ th: "โซนตรวจจับ (Detector Zone)", en: "Detector Zone" })}
         </text>
         <text x="348" y="150" textAnchor="middle" fontSize="12" fontWeight="600" fill="#64748b">
-          เส้นหยุด (Stop)
+          {t({ th: "เส้นหยุด (Stop)", en: "Stop line" })}
         </text>
       </svg>
       {label && (

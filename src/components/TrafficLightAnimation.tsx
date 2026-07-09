@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/lib/i18n";
 import type { LightColor } from "@/lib/types";
 
 const SIZES = {
@@ -45,17 +46,21 @@ export function TrafficLightAnimation({
   ariaLabel,
   className = "",
 }: TrafficLightAnimationProps) {
+  const { t } = useLanguage();
   const s = SIZES[size];
   const width = s.light + s.pad * 2;
   const height = s.light * 3 + s.gap * 2 + s.pad * 2;
+  const activeLightName = t({
+    th: LIGHT_META[active].labelTh,
+    en: LIGHT_META[active].labelEn,
+  });
 
   return (
     <figure
       className={`inline-flex flex-col items-center gap-2 ${className}`}
       role="img"
       aria-label={
-        ariaLabel ??
-        `${label ? `${label}: ` : ""}${LIGHT_META[active].labelTh} (${LIGHT_META[active].labelEn})`
+        ariaLabel ?? `${label ? `${label}: ` : ""}${activeLightName}`
       }
     >
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">

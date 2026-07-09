@@ -61,7 +61,12 @@ export function SystemComparisonTable({ className = "" }: { className?: string }
       {/* Desktop: full table with sticky first column                  */}
       {/* ------------------------------------------------------------ */}
       <div className="hidden md:block">
-        <div className="overflow-x-auto rounded-2xl border border-navy-100 bg-white shadow-sm">
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label={t(CAPTION)}
+          className="overflow-x-auto rounded-2xl border border-navy-100 bg-white shadow-sm"
+        >
           <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left text-sm">
             <caption className="sr-only">{t(CAPTION)}</caption>
             <thead>

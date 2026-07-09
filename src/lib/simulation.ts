@@ -68,6 +68,7 @@ export type Road = "main" | "side";
 export type GreenEndReason =
   | "gap-out" // no vehicle arrived within the gap time → ended early
   | "max-out" // vehicles kept coming but Max Green was reached
+  | "side-call" // green was resting past Max Green and ended when a call arrived
   | "fixed-time" // the pre-set schedule expired (demand ignored)
   | "adaptive-plan"; // the green computed for this cycle was used up
 
@@ -112,6 +113,13 @@ export interface SimState {
   recentArrivals: { main: number; side: number };
   /** Fractional departure progress per approach (1 car per 2 s of green). */
   departureCredit: Record<ApproachId, number>;
+  /**
+   * `phaseElapsed` at which the current side-road call registered during
+   * the VA main green, or `null` while no call is active. Lets the engine
+   * tell a true max-out (call waiting while demand extended green to the
+   * cap) from a rested green answering a late call.
+   */
+  sideCallRegisteredAt: number | null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -195,6 +203,7 @@ export function createInitialState(settings: SimulatorSettings): SimState {
     smoothedWaiting: 0,
     recentArrivals: { main: 0, side: 0 },
     departureCredit: { north: 0, south: 0, east: 0, west: 0 },
+    sideCallRegisteredAt: null,
   };
   if (settings.mode === "adaptive" && settings.detectorEnabled) {
     state.adaptiveAllocation = computeAdaptiveAllocation(state, settings);
@@ -321,6 +330,7 @@ function advancePhase(next: SimState, settings: SimulatorSettings): void {
       if (next.phaseElapsed >= ALL_RED_TIME) {
         enterPhase(next, "main-green");
         next.greenElapsed = 0;
+        next.sideCallRegisteredAt = null;
         // A new cycle starts: adaptive mode re-plans its green split now.
         if (settings.mode === "adaptive" && settings.detectorEnabled) {
           next.adaptiveAllocation = computeAdaptiveAllocation(next, settings);
@@ -368,9 +378,24 @@ function mainGreenEnd(
 
   if (settings.mode === "va") {
     // Main green is the RESTING phase: with no side-road call it never ends.
-    if (!next.calls.side) return null;
+    if (!next.calls.side) {
+      next.sideCallRegisteredAt = null;
+      return null;
+    }
+    // Remember when this call first registered (during main green the side
+    // queue can only grow, so the call stays active until the phase ends).
+    if (next.sideCallRegisteredAt === null) {
+      next.sideCallRegisteredAt = next.phaseElapsed;
+    }
     if (next.phaseElapsed < settings.minGreen) return null;
-    if (next.phaseElapsed >= settings.maxGreen) return "max-out";
+    if (next.phaseElapsed >= settings.maxGreen) {
+      // If the call only arrived at/after the Max Green mark, the green was
+      // RESTING (not being extended by demand) — ending now is a response
+      // to the vehicle call, not a max-out.
+      return next.sideCallRegisteredAt >= settings.maxGreen
+        ? "side-call"
+        : "max-out";
+    }
     if (next.lastGap.main >= settings.gapTime) return "gap-out";
     return null;
   }
@@ -528,19 +553,16 @@ function suggestSystem(settings: SimulatorSettings): {
     return {
       id: "fixed-time",
       reason: {
-        th: "ไม่มีตัวตรวจจับ (Detector) ระบบที่ทำงานได้จริงคือ Fixed Time — เหมาะเมื่อปริมาณรถคาดการณ์ได้ล่วงหน้า",
+        th: "ไม่มีอุปกรณ์ตรวจจับรถ (Detector) ระบบที่ทำงานได้จริงคือ Fixed Time — เหมาะเมื่อปริมาณรถคาดการณ์ได้ล่วงหน้า",
         en: "With no detectors, Fixed Time is the only workable option — best when demand is predictable.",
       },
     };
   }
-  if (
-    mainDemand === "high" &&
-    (sideDemand === "high" || sideDemand === "medium")
-  ) {
+  if (mainDemand === "high" && sideDemand === "medium") {
     return {
       id: "adaptive",
       reason: {
-        th: "ทั้งสองถนนมีรถมากและไม่เท่ากัน ระบบ Adaptive แบ่งเวลาเขียว (Green Time) ใหม่ตามแถวรถจริงได้ทุกๆ รอบ",
+        th: "ทั้งสองถนนมีรถมากและไม่เท่ากัน ระบบ Adaptive แบ่งเวลาเขียว (Green Time) ใหม่ตามแถวรถจริงได้ทุก ๆ รอบ",
         en: "Both roads are busy and uneven — Adaptive re-balances green time from measured queues every cycle.",
       },
     };
@@ -549,7 +571,7 @@ function suggestSystem(settings: SimulatorSettings): {
     return {
       id: "vehicle-actuated",
       reason: {
-        th: "ปริมาณรถสองถนนต่างกัน ระบบ VA ให้ไฟเขียวถนนรองเฉพาะเมื่อตัวตรวจจับพบรถจริง",
+        th: "ปริมาณรถสองถนนต่างกัน ระบบ VA ให้ไฟเขียวถนนรองเฉพาะเมื่ออุปกรณ์ตรวจจับพบรถจริง",
         en: "Demand differs between the two roads — VA serves the side road only when detectors see real vehicles.",
       },
     };
@@ -602,6 +624,11 @@ function explainNow(state: SimState, settings: SimulatorSettings): Bi {
           th: `ไฟเขียว${road.th}ถูกตัดที่เพดานสูงสุด (max-out) ${settings.maxGreen} วินาที แม้ยังมีรถมาต่อเนื่อง เพื่อไม่ให้อีกฝั่งรอนานเกินไป`,
           en: `Green on ${road.en} hit the ${settings.maxGreen}-second Max Green (max-out) even though vehicles kept arriving — so the other road never waits forever.`,
         };
+      case "side-call":
+        return {
+          th: `ไฟเขียว${road.th}ค้างรออยู่ (resting) และสิ้นสุดทันทีที่อุปกรณ์ตรวจจับพบรถบนถนนรอง (vehicle call) — ไม่ใช่การชนเพดาน Max Green`,
+          en: `Green on ${road.en} had been resting and ended the moment detectors registered a side-road vehicle call — it did not hit Max Green.`,
+        };
       case "fixed-time":
         return {
           th: `ไฟเขียว${road.th}จบตามตารางเวลาที่ตั้งไว้ ไม่ว่าจะมีรถมากหรือน้อย`,
@@ -618,26 +645,26 @@ function explainNow(state: SimState, settings: SimulatorSettings): Bi {
   // Otherwise, describe the current behavior.
   if (settings.mode === "fixed") {
     return {
-      th: `ระบบนับเวลาตามตาราง: เขียวถนนหลัก ${split.main} วินาที / ถนนรอง ${split.side} วินาที ทุกๆ รอบ โดยไม่ดูปริมาณรถเลย`,
+      th: `ระบบนับเวลาตามตาราง: เขียวถนนหลัก ${split.main} วินาที / ถนนรอง ${split.side} วินาที ทุก ๆ รอบ โดยไม่ดูปริมาณรถเลย`,
       en: `The controller follows its schedule: ${split.main} s main-road green / ${split.side} s side-road green every cycle — demand is never checked.`,
     };
   }
   if (!detectorsOn) {
     return {
-      th: "ตัวตรวจจับ (Detector) ปิดอยู่ ระบบจึงมองไม่เห็นรถและทำงานเหมือน Fixed Time — ลองเปิดตัวตรวจจับเพื่อเห็นความแตกต่าง",
+      th: "อุปกรณ์ตรวจจับรถ (Detector) ปิดอยู่ ระบบจึงมองไม่เห็นรถและทำงานเหมือน Fixed Time — ลองเปิดอุปกรณ์ตรวจจับเพื่อเห็นความแตกต่าง",
       en: "Detectors are OFF, so the controller cannot see any vehicles and behaves exactly like Fixed Time — switch detectors on to see the difference.",
     };
   }
   if (settings.mode === "va") {
     if (state.phase === "main-green" && !state.calls.side) {
       return {
-        th: "ไฟเขียวค้างที่ถนนหลัก (resting phase) เพราะตัวตรวจจับยังไม่พบรถบนถนนรอง — ไม่มีรถ ก็ไม่ต้องสลับไฟ",
+        th: "ไฟเขียวค้างที่ถนนหลัก (resting phase) เพราะอุปกรณ์ตรวจจับยังไม่พบรถบนถนนรอง — ไม่มีรถ ก็ไม่ต้องสลับไฟ",
         en: "Green is resting on the main road because detectors see no side-road vehicles — no call, no switch.",
       };
     }
     if (state.phase === "main-green") {
       return {
-        th: `ตัวตรวจจับพบรถบนถนนรอง (vehicle call) ระบบกำลังรอช่องว่าง ${settings.gapTime} วินาที (gap-out) หรือครบ Max Green ${settings.maxGreen} วินาที จึงจะสลับเฟส`,
+        th: `อุปกรณ์ตรวจจับพบรถบนถนนรอง (vehicle call) ระบบกำลังรอช่องว่าง ${settings.gapTime} วินาที (gap-out) หรือครบ Max Green ${settings.maxGreen} วินาที จึงจะสลับเฟส`,
         en: `A side-road vehicle call is registered — the controller is waiting for a ${settings.gapTime}-second gap (gap-out) or the ${settings.maxGreen}-second Max Green before switching.`,
       };
     }
@@ -661,7 +688,7 @@ function explainNow(state: SimState, settings: SimulatorSettings): Bi {
     };
   }
   return {
-    th: "ระบบ Adaptive กำลังรวบรวมข้อมูลแถวรถจากตัวตรวจจับ เพื่อคำนวณสัดส่วนเวลาเขียวของรอบถัดไป",
+    th: "ระบบ Adaptive กำลังรวบรวมข้อมูลแถวรถจากอุปกรณ์ตรวจจับ เพื่อคำนวณสัดส่วนเวลาเขียวของรอบถัดไป",
     en: "Adaptive is collecting queue data from the detectors to compute the next cycle's green split.",
   };
 }

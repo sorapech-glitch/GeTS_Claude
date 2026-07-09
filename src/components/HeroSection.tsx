@@ -9,6 +9,7 @@
 
 import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui";
+import { PauseIcon, PlayIcon } from "@/components/icons";
 import { IntersectionDiagram } from "@/components/IntersectionDiagram";
 import { useLanguage } from "@/lib/i18n";
 import type { Bi, LightColor } from "@/lib/types";
@@ -61,14 +62,26 @@ function phaseFor(tick: number): Bi {
 export function HeroSection() {
   const { t } = useLanguage();
   const [tick, setTick] = useState(0);
+  const [running, setRunning] = useState(true);
+
+  // Respect prefers-reduced-motion: rest on the representative tick-0
+  // frame (E–W green with queued cars) until the user presses play.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setRunning(!mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setRunning(!e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
+    if (!running) return;
     const id = setInterval(
       () => setTick((v) => (v + 1) % CYCLE_LENGTH),
       TICK_MS
     );
     return () => clearInterval(id);
-  }, []);
+  }, [running]);
 
   const phase = phaseFor(tick);
   const diagramTitle = `${t({
@@ -178,12 +191,26 @@ export function HeroSection() {
           >
             <div className="relative mx-auto w-full max-w-md rounded-3xl border border-navy-700/70 bg-navy-900/60 p-4 shadow-2xl backdrop-blur sm:p-5">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-accent-400">
-                  <span
-                    aria-hidden="true"
-                    className="h-2 w-2 animate-signal-pulse rounded-full bg-accent-400"
-                  />
-                  {t({ th: "เดโมสด", en: "Live demo" })}
+                <span className="inline-flex items-center gap-2">
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-accent-400">
+                    <span
+                      aria-hidden="true"
+                      className="h-2 w-2 animate-signal-pulse rounded-full bg-accent-400"
+                    />
+                    {t({ th: "เดโมสด", en: "Live demo" })}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setRunning((r) => !r)}
+                    aria-label={
+                      running
+                        ? t({ th: "หยุดชั่วคราว (Pause)", en: "Pause" })
+                        : t({ th: "เล่น (Play)", en: "Play" })
+                    }
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg text-navy-200 transition-colors hover:bg-navy-800 hover:text-white"
+                  >
+                    {running ? <PauseIcon /> : <PlayIcon />}
+                  </button>
                 </span>
                 <span className="rounded-full bg-navy-800 px-3 py-1 text-xs font-medium text-navy-200">
                   {t(phase)}

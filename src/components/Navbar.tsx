@@ -107,7 +107,7 @@ export function Navbar() {
               type="button"
               onClick={() => setLang("th")}
               aria-pressed={lang === "th"}
-              className={`px-3 py-1.5 text-sm font-semibold transition-colors ${
+              className={`min-h-11 px-3 py-1.5 text-sm font-semibold transition-colors ${
                 lang === "th"
                   ? "bg-white text-navy-900"
                   : "bg-transparent text-navy-200 hover:bg-navy-800"
@@ -119,7 +119,7 @@ export function Navbar() {
               type="button"
               onClick={() => setLang("en")}
               aria-pressed={lang === "en"}
-              className={`px-3 py-1.5 text-sm font-semibold transition-colors ${
+              className={`min-h-11 px-3 py-1.5 text-sm font-semibold transition-colors ${
                 lang === "en"
                   ? "bg-white text-navy-900"
                   : "bg-transparent text-navy-200 hover:bg-navy-800"

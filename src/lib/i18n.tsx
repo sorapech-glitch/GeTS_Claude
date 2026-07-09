@@ -39,9 +39,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("th");
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "en" || stored === "th") {
-      setLangState(stored);
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (stored === "en" || stored === "th") {
+        setLangState(stored);
+      }
+    } catch {
+      // localStorage unavailable (private mode / blocked storage) — keep the Thai default
     }
   }, []);
 

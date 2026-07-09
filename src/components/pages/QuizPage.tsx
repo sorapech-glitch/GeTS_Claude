@@ -9,12 +9,14 @@ import type { Bi, QuizQuestion } from "@/lib/types";
 import {
   ACCENT_STYLES,
   Badge,
+  Button,
   ButtonLink,
   Callout,
   PageHero,
   Section,
   SectionHeading,
 } from "@/components/ui";
+import { ArrowRightIcon } from "@/components/icons";
 import { QuizCard } from "@/components/QuizCard";
 
 /* ------------------------------------------------------------------ */
@@ -109,20 +111,6 @@ function CrossIcon() {
   );
 }
 
-function ArrowRightIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M5 12h14m-6-6 6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 /* ------------------------------------------------------------------ */
 /* Score ring (donut SVG)                                              */
 /* ------------------------------------------------------------------ */
@@ -205,12 +193,26 @@ export function QuizPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const topRef = useRef<HTMLDivElement>(null);
+  const resultHeadingRef = useRef<HTMLDivElement>(null);
 
   // Bring the active question / result into view when the stage advances.
   useEffect(() => {
     if (stage === "intro") return;
-    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    topRef.current?.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
   }, [stage, current]);
+
+  // Move keyboard focus onto the result heading when the quiz finishes, so
+  // focus does not drop to <body> as the last QuizCard unmounts.
+  useEffect(() => {
+    if (stage !== "result") return;
+    resultHeadingRef.current?.focus({ preventScroll: true });
+  }, [stage]);
 
   // Shuffling happens in event handlers (never during render) so the
   // server-rendered markup always matches the first client render.
@@ -396,14 +398,10 @@ export function QuizPage() {
           </Callout>
 
           <div className="mt-10 flex flex-col items-center gap-3">
-            <button
-              type="button"
-              onClick={startQuiz}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-navy-700 px-8 py-3 text-base font-semibold text-white transition-colors hover:bg-navy-600"
-            >
+            <Button variant="primary" size="md" onClick={startQuiz}>
               {t({ th: "เริ่มทำแบบทดสอบ", en: "Start quiz" })}
               <ArrowRightIcon />
-            </button>
+            </Button>
             <p className="text-sm text-navy-500">
               {t({
                 th: `${quizQuestions.length} ข้อ · ใช้เวลาประมาณ 5–10 นาที`,
@@ -435,10 +433,12 @@ export function QuizPage() {
       {/* 4 — Result screen */}
       {stage === "result" && (
         <Section className="bg-navy-50">
-          <SectionHeading
-            eyebrow={t({ th: "ผลคะแนน", en: "Your result" })}
-            title={t({ th: "ทำได้เท่าไรมาดูกัน", en: "Here is how you did" })}
-          />
+          <div ref={resultHeadingRef} tabIndex={-1}>
+            <SectionHeading
+              eyebrow={t({ th: "ผลคะแนน", en: "Your result" })}
+              title={t({ th: "ทำได้เท่าไรมาดูกัน", en: "Here is how you did" })}
+            />
+          </div>
 
           {/* Score panel */}
           <div className="mt-10 flex flex-col items-center gap-8 rounded-2xl border border-navy-100 bg-white p-6 shadow-sm sm:p-8 md:flex-row md:items-center">
@@ -464,13 +464,9 @@ export function QuizPage() {
                 })}
               </p>
               <div className="mt-5 flex flex-wrap justify-center gap-3 md:justify-start">
-                <button
-                  type="button"
-                  onClick={startQuiz}
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-navy-700 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-navy-600"
-                >
+                <Button variant="primary" size="md" onClick={startQuiz}>
                   {t({ th: "ทำอีกครั้ง", en: "Try again" })}
-                </button>
+                </Button>
                 <ButtonLink href="/glossary" variant="outline">
                   {t({ th: "ทบทวนอภิธานศัพท์ (Glossary)", en: "Review the glossary" })}
                 </ButtonLink>
